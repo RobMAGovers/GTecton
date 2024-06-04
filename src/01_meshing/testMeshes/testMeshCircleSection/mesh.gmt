@@ -1,0 +1,85 @@
+#!/bin/sh -x
+# Creates PostScript file of stresses using GMT commands
+
+#Define input files
+DISP=F;VEL=F;STRESS=F;STRAIN=F;PARTITIONS=T
+
+INDIR='plnplt/'
+OUTDIR='./'
+
+if [ $STRESS = "T" ]; then
+      INFILE=${INDIR}estre.dat
+      OUTFILE=${OUTDIR}stress.ps
+elif [ $DISP = "T" ]; then
+      INFILE=${INDIR}edi.dat
+      OUTFILE=${OUTDIR}disp.ps
+elif [ $STRAIN = "T" ]; then
+      INFILE=${INDIR}estra.dat
+      OUTFILE=${OUTDIR}strain.ps
+elif [ $VEL = "T" ]; then
+      INFILE=${INDIR}eve.dat
+      OUTFILE=${OUTDIR}vel.ps
+elif [ $PARTITIONS = "T" ]; then
+      INFILE=${INDIR}partitions.dat
+      OUTFILE=${OUTDIR}partitions.ps
+fi
+
+
+gmtset D_FORMAT %2.0f
+
+
+#define if to add:
+MESH=T;PAX=F;VEC=F
+
+#####################################
+#set plot window
+xmin=0
+xmax=100
+ymin=0
+ymax=20
+
+SCALE=0.2
+LABEL=-Ba5
+#####################################
+VIEW=
+
+PROJ=-Jx${SCALE}
+VERBOSE=-V
+FRAME=-R${xmin}/${xmax}/${ymin}/${ymax}
+gmtset PAPER_MEDIA A4
+
+# Auto color scale: determine extrema
+set -- `minmax -C ${INFILE}`; FMIN=$5 ; FMAX=$6
+# define contour interval
+#FSTP=`echo $FMIN $FMAX | awk '{print ($2-$1)/100}'`
+
+echo $FMIN $FMAX $FSTP > test.fuu
+
+FSTP=1.0
+# create color palette
+
+makecpt -T${FMIN}/${FMAX}/${FSTP} >| color.cpt
+
+
+
+# start plot with frame
+psbasemap ${PROJ} ${FRAME} ${LABEL} ${VIEW} ${VERBOSE} -K > ${OUTFILE} || exit 1
+
+# Contour effective value (pscontour -L draws mesh)
+cat ${INFILE} | awk '{print $1,$2,$3}' |\
+pscontour -T${INDIR}connectivity.dat -Ccolor.cpt  -I ${PROJ} ${FRAME} ${LABEL} ${VIEW} ${VERBOSE} \
+ -O -K >> ${OUTFILE} || exit 1
+
+# plot mesh
+psxy ${INDIR}meshEdges.dat -M ${PROJ} ${FRAME} ${LABEL} ${VIEW} ${VERBOSE} -W1 -O -K >> \
+ ${OUTFILE} || exit 1
+
+# add partition boundaries
+psxy ${INDIR}/partitionBoundaries.dat ${PROJ} ${FRAME} ${LABEL} ${VIEW} ${VERBOSE} -W1 -O  >> \
+ ${OUTFILE} || exit 1
+
+
+
+
+gmtset D_FORMAT %2.6f
+

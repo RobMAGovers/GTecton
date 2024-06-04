@@ -1,0 +1,24 @@
+EXITP(3F-BSD)                                                    EXITP(3F-BSD)
+
+
+
+NNAAMMEE
+       exitp - terminate process
+
+SSYYNNOOPPSSIISS
+       subroutine exitp (istatus)
+       integer istatus
+
+DDEESSCCRRIIPPTTIIOONN
+       exitp() terminates the calling process and passes istatus to the system
+       for inspection, see wait(2). Logical units are flushed and closed.
+
+SSEEEE AALLSSOO
+       exit(2), abort(2)
+
+AAUUTTHHOORR
+       Rob Govers.
+
+
+
+4th Berkeley Distribution      December 15, 1993                 EXITP(3F-BSD)

@@ -1,0 +1,48 @@
+'\" t
+.TH PLT3D 1 "February 4, 2021" "Utrecht University"
+.UC 4
+.SH NAME
+plt3d \- research tool aimed at providing ways to 1) output files for direct visualization of 3D \fIGTecton\fP in- and output data,
+2) monitor/probe the FEM output for nodes or elements with specific \fIGMSH\fP tags, and 3) monitor/probe FEM output for
+specific node or element numbers.  Most of the output is written as Visualization Toolkit (VTK) files. In the current version, we 
+use the VTK variant for SERIAL unstructured data (VTU). The data format is limited to ASCII, i.e., there is no BINARY support. 
+\fIParaView\fP can read and visualize the VTU data.
+.PP
+NOTE: The functionality of the current version of the code is very limited. The most important limitation is that the change
+in output data structure (nodal point based to element based) that comes with the introduction of faulted or slippery nodes is hardly recognized
+and implemented. Monitoring is highly incompletely supported.
+.SH SYNOPSIS
+\fBplt3d\fP [options]
+.SH DESCRIPTION
+\fIplt3d\fP is an interactive program for examining finite element (FE)
+input and output data. \fIplt3d\fP can also be viewed as a filter between FE program
+\fIf3d\fP and visualization program \fIParaView\fP (for above aim 1).
+.PP
+When called without a file argument, \fIplt3d\fP reads commands from 
+standard input (stdin). On-line help is provided in this interactive mode in by typing "?" or for example "? femi".
+When a file argument is given, commands are read from this file until,
+after the end-of-file (EOF) has been reached succesfully, commands
+are read from stdin.
+.SH VERSION
+2021
+.SH OPTIONS
+.TP
+.BI "noecho"
+Silent mode, i.e. set echoing off (this is the default).
+.TP
+.BI "echo"
+Echoing mode. Major stages of the program are reported.
+.TP
+.BI "file"
+Commands file name.
+.SH FILES
+Files which are special to the program are described more extensively
+in the \fIf3d\fP(7) manual pages. More specific, FE input files are
+by default assumed to be "TECIN.DAT" and "TEMPIN.DAT". FE output is
+by default assumed to reside in "FEDSK.DAT".
+.SH SEE ALSO
+f3d(1), gmsh(1), ParaView(1)
+.SH "BUGS"
+Report bugs to Rob Govers (email: r.govers@uu.nl).
+.SH AUTHORS
+Written by Rob Govers.

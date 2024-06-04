@@ -1,0 +1,32 @@
+Input routines and parameters for modelling subduction
+Susanne Buiter, 28 november 1999
+*
+Subduction and Roll-back routines:
+ovrpr    - reduction of winkler pressures lower side subducting plate (NARCS<0)
+gravslab - forcing of subducting plate
+unbend   - unbending forces for initial bending
+isos     - correction on isostatic boundary forces (NUMPR<0 + NSURF>0)
+*
+subduction parameters:
+- ovrpr: drt 0
+- gravslab: C=0
+roll-back:
+- ovrpr: drt 0 or drt -30 km (for Italy)
+- gravslab: C=0.5
+*
+Detachment:
+* visco.f: detach=.true.
+* visco.f: sdstep defines timestep of detachment
+   (no check if this corresponds with inputfile!)
+* Unlocking detachment fault through input file.
+* After detachment, the detached part sinks with a prescribed velocity,
+  this is defined in gravslab.
+  Call to initd for nstep > sdstep
+sdetach  - remove forces (non-differential) across fault
+sink     - add viscous stresses due to sinking detached part
+   (needs sinking velocity)
+*
+
+Routines with either node number or element number dependencies:
+visco.F: MODUPDATE
+plnlib.F & f3dlib.F: OVRPR, GRAVSLAB

@@ -1,0 +1,224 @@
+F3D(1)                      General Commands Manual                     F3D(1)
+
+
+
+[1mNAME[0m
+       f3d  -  thermo-mechanical finite element program for 3-D tectonic model
+       calculations.
+
+[1mSYNOPSIS[0m
+       [1mf3d [22m[options]
+
+[1mDESCRIPTION[0m
+       [4mf3d[24m performs finite element (FE) calculations to solve  the  mechanical
+       equilibrium  as  well as the heat equation. Temperature-dependent mate-
+       rial properties and non-linear rheologies are implemented.  [4mf3d[24m is  the
+       3D version of the [1mGTECTON [22mFE package.
+
+       When  called  without  arguments, [4mf3d[24m assumes that an input file, named
+       TECIN.DAT, exists in the current working directory. In this file, nodal
+       point  coordinates, mechanical boundary conditions, material properties
+       and elements are defined. This file also contains  switching  variables
+       which  control,  for  instance, the solution mode. If thermal solutions
+       are requested, a second file (TEMPIN.DAT) is assumed, which defines the
+       thermal  problem.   Refer to textbooks on the finite element method and
+       the GTECTON manual (see LITERATURE) for the underlying principles.
+
+       The typical workflow of an f3d run typically consists of the  following
+       stages:
+
+       [1m1  [22mCreating the FEM input files: (a) Creating the mesh (see: [4mgmsh[24m); (b)
+       Setting initial conditions and the boundary  conditions  (see:  [4mpicknps[0m
+       and  [4melmside[24m); (c) Partitioning the mesh (see: [4mpartition[24m) (d) Verifying
+       the FEM input (see: [4mplt3d[24m and [4mparaview[24m).
+
+       [1m2 [22mComputing the finite element solution (see: [4mmpirun[24m and [4mqsub[24m)
+
+       [1m3 [22mMerging the FEM output files produced by all the threads (see: [4mmerge-[0m
+       [4mfiles[24m).  This step is also needed for a single-processor run.
+
+       [1m4  [22mPostprocessing  and  visualizing the FEM results(see: [4mplt3d[24m and [4mpar-[0m
+       [4maview[24m).
+
+
+[1mVERSION[0m
+       2021.08
+
+[1mOPTIONS[0m
+       [1mpartinfo=file[0m
+              Gives name of the file with partitioning information.  Note that
+              this  file  is  always required, even for single-processor runs.
+              The default file name is partition.info.
+
+       [1mas[cii] or nobi[nary][0m
+              Writes ASCII (human-readible) data to  [4mworkpath/FEDSK.DAT.[24m   The
+              default is binary.
+
+       [1mbi[nary] or noas[cii][0m
+              Write  binary FE-output data to [4mworkpath/FEDSK.DAT.[24m  This is the
+              default.
+
+       [1mtest[=0|1|2][0m
+              test[=0]: No testing (default)
+              test=1: HIGHLY RECOMMENDED AFTER YOU SET UP A NEW MODEL. Perform
+              additional (time consuming) tests on input data and continue: 1)
+              positively oriented elements, 2) nodes that have been defined as
+              both slippery and faulted.
+              test=2:  Perform  initialization  and  one  single time step (if
+              required) before stopping.
+
+       [1mecho=0 or noecho[0m
+              Silent mode, i.e. set echoing off (this is the default).
+
+       [1mecho, echo=1[0m
+              Normal echoing mode. Major stages of the program are reported.
+
+       [1mecho=2 [22mPrint info on mechanical input file  structure.  Typically  used
+              when "debugging" the mechanical input file.
+
+       [1mecho=3 [22mPrint what is written to "FEDSK.DAT" (only in "ASCII"-mode, oth-
+              erwise equivalent to "echo=1")
+
+       [1mecho=4 [22mPrint info on thermal input file structure. Typically used  when
+              "debugging" the thermal input file.
+
+       [1mecho=5 [22mPrint  info on the interaction between GTecton and PETSc.  Warn-
+              ing: This can yield a lot of output
+
+       [1mecho=6 [22mPrint info on the time spent in various part of the code. Useful
+              for profiling.
+
+       [1mecho=8 [22mPrint info on the health of the various threads. Due to the need
+              to synchronise the threads in order to produce readable  output,
+              this echo value will slow the code down considerably.
+
+       [1mdebug  [22mPrints extensive debugging information
+
+       [1mbi[nary], noas[cii][0m
+              Write binary FE-output data to [4mFEDSK.DAT.[24m  This is the default
+
+       [1mfein=file[0m
+              Reads input from [4mfile[24m instead of [4mTECIN.DAT.[0m
+
+       [1mas[cii], nobi[nary][0m
+              Writes   ASCII  data to [4mFEDSK.DAT.[24m  The default is to write data
+              as binary.
+
+       [1mfeout[=file][0m
+              Writes extensive information on input and output of the FE  cal-
+              culations  to  [4mFEOUT.DAT.[24m   Optional = [4mfile[24m replaces output file
+              name [4mFEOUT.DAT[24m by [4mfile.[0m
+
+       [1mnofeout[0m
+              Does not write [4mFEOUT.DAT.[0m
+
+       [1mout=file[0m
+              Merge standard output and standard error into [4mfile.[0m
+
+       [1mfedsk=[dirname/][basename][0m
+              Writes FE-output according to how [4mdirname[24m and [4mbasename[24m are  sup-
+              plied.
+
+              When  only  [4mbasename[24m  is  given,  the ouput will be written into
+              [4mbasename.timestep[24m.
+
+              When only [4mdirname/[24m is given -- the '/' is required in this  case
+              --  the  output will be written into [4mdirname/FEDSK.DAT.timestep[24m.
+              (FEDSK being the default output name.)
+
+              When  both  are  given,  the  output  will   be   written   into
+              [4mdirname/basename.timestep[24m.
+
+              When  this  option is not used ([1mfedsk [22mshould not be used without
+              an argument) the output will be written into [4mFEDSK.DAT.timestep[24m.
+
+       [1mtempin=file[0m
+              Reads thermal FE-input from  [4mfile[24m  instead  of  [4mTEMPIN.DAT[24m  (the
+              default file name).
+
+       [1m-pc_type TYPE[0m
+              When  using the [4mPetSc[24m iterative solvers, this flag allows to set
+              the preconditioner that is used. Note that not  all  KSP's  give
+              stable results! TYPE should be one of "none", "jacobi" (Jacobi),
+              "sor" (successive overrelaxation), "lu" (direct solver, based on
+              LU  factorization,  DEFAULT  for  mechanical problem), "bjacobi"
+              (block Jacobi),  "eisenstat"  (symmetric  successive  overrelax-
+              ation,  symmetric  Gauss-Seidel  with  Eisenstat's trick), "ilu"
+              (incomplete factorization, DEFAULT for thermal  problem),  "icc"
+              (Incomplete  Cholesky  factorization), "asm" (additive Schwarz),
+              "spai" (Sparse Approximate Inverse method), "nn" (Balancing Neu-
+              mann-Neumann),  "cholesky"  (Cholesky factorization based direct
+              solver), "pbjacobi" (Point block Jacobi), "prometheus" (diagonal
+              scaling). More information can be found on the [4mPetSc[24m website.
+
+       [1m-ksp_type TYPE[0m
+              When using the [4mPetSc[24m iterative solvers, this flag can be used to
+              set the Krylov subspace method (KSP). Not all types work for the
+              GTECTON matrix problem! TYPE should be one of "richardson" (pre-
+              conditioned Richardson), "chebychev" (preconditioned Chebychev),
+              "cg"  (conjugate  gradient,  DEFAULT  for mechanical and thermal
+              problems), "cgne" (cheeper preconditioned  conjugate  gradient),
+              "gmres"  (Generalized  Minimal  Residual,  DEFAULT  for  thermal
+              advection  problem),  "fgmres"  (Flexible  Generalized   Minimal
+              Residual),  "tcqmr"  (variant of quasi minimal residual), "bcgs"
+              (Stabilized version of BiConjugate  Gradient  Squared),  "bcgsl"
+              (Enhanced  BiCGStab),  "cgs"  (Conjugate Gradient Squared), "cr"
+              (preconditioned conjugate residuals),  "lsqr"  (least  squares),
+              "bicg"  (Biconjugate  gradient),  "minres"  (Minimum  Residual),
+              "symmlq" (SYMMLQ).  More information can be found on  the  [4mPetSc[0m
+              website.
+
+       [1m-ksp_rtol NUMBER[0m
+              Sets relative tolerance for iterative solver in [4mPetSc[24m (default =
+              1e-7).
+
+[1mFILES[0m
+       The names of all files can be changed (see OPTIONS). Names below  refer
+       to defaults.
+
+   [1mInput files[0m
+       Input  files  can  be built from other include-files. Include-files are
+       indicated by .so [4mfile,[24m [1msoelim [22mcan be  used  to  examine  the  resulting
+       file.  Input files all are in fixed format.
+
+       [1mTECIN.DAT[0m
+              FE  input  file. In this file the geometry of the finite element
+              mesh and the mechanical properties and boundary  conditions  are
+              defined.
+
+       [1mTEMPIN.DAT[0m
+              FE  input file. In this file the thermal properties and boundary
+              conditions are defined.
+
+   [1mOutput files[0m
+       [1mFEOUT.DAT[0m
+              FE output file. This file gives a verbose report of in- and out-
+              put  of  the finite element program. The file is in ASCII format
+              and tends to get very big for many applications. It is not  used
+              for  post-processing  and  is  intended to be used for elaborate
+              checking of input data only.
+
+       [1mFEDSK.DAT[0m
+              FE output file. Compact output  used  for  post-processing  (see
+              [4mplt3d[24m).  If not explicitly set to ASCII (see OPTIONS), this file
+              has binary format.
+
+[1mENVIRONMENT[0m
+       Environment variable MYTMP defines the directory where temporary  files
+       are kept. If not set, temporary storage occurs in /tmp.
+
+       LD_LIBRARY_PATH  should  point to the PETSC home directory in case that
+       sparse solvers are being used.
+
+[1mSEE ALSO[0m
+       f3d(7), plt3d(1), gmsh(1), partition, mergefiles, picknps, elmside
+
+[1mBUGS OR POSSIBLE FLAWS[0m
+       Report bugs to Rob Govers (email: r.govers@uu.nl).
+
+[1mLITERATURE[0m
+       Govers, R., GTECTON technical reference manual.
+
+
+
+4th Berkeley Distribution       August 17, 2021                         F3D(1)

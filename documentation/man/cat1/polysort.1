@@ -1,0 +1,47 @@
+POLYSORT(L)                                                        POLYSORT(L)
+
+
+
+[1mNAME[0m
+       polysort - sort coordinates along a polygon
+
+[1mSYNOPSIS[0m
+       [1mpolysort [22m-p polygon_file [-e eps] [-v] [-w] [filename]
+
+[1mDESCRIPTION[0m
+       [1mpolysort  [22mis  a program that sorts coordinates using an oriented (i.e.,
+       spatially sorted) polygon. It computes the  along-polygon  distance  of
+       the  coordinates  from  the first polygon coordinate and uses this dis-
+       tance to sort the coordinates. Polysort returns the coordinate numbers.
+
+[1mARGUMENTS[0m
+       [1m-p polygon_file[0m
+              Oriented polygon used for sorting coordinates. Input consists of
+              (x,y)-pairs.
+
+       [1m-e eps [22mNumber to specify precision of coordinate data.
+
+       [1m-v     [22mVerbose  on.   [1m-w  [22mWrapping on. Wrapping is an obscure remainder
+              from the past.
+
+       [1mfilename[0m
+              File containing coordinates that have to be  ordered  along  the
+              polygon. Input consists of node number and (x,y)-pair.
+
+[1mEXAMPLE[0m
+       polysort -p Polygon_Eurasia.xy -e 0.01 trench_2
+              which  sorts the coordinates in trench_2 given the polygon given
+              in Polygon_Eurasia.xy
+
+[1mSEE ALSO[0m
+       [4mpicknps[24m, [4melmside[0m
+
+[1mAUTHORS[0m
+       Rob Govers, Wienand Drenth
+
+[1mBUGS[0m
+       Report bugs to Wienand Drenth (wdrenth@geo.uu.nl).
+
+
+
+4th Berkeley Distribution        July 15 2021                      POLYSORT(L)

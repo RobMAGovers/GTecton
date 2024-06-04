@@ -1,0 +1,21 @@
+TRI2FE(1)                   General Commands Manual                  TRI2FE(1)
+
+
+
+[1mNAME[0m
+       tri2fe -n TriangleNodeFile -e TriangleElmFile
+
+[1mDESCRIPTION[0m
+       Converts output from [4mtriangle[24m to input for [4mGTECTON[24m. Nodal point coordi-
+       nates are output to file "tecin.dat.nps" and  element  connectivity  to
+       file "tecin.dat.elm".  These filenames cannot be changed.
+
+[1mSEE ALSO[0m
+       triangle(1), pln(1), pln(7), opn(1), opn(7), plnplt(1), opnplt(1)
+
+[1mBUGS OR POSSIBLE FLAWS[0m
+       Report bugs to Rob Govers (email: r.govers@uu.nl).
+
+
+
+4th Berkeley Distribution       August 26, 2013                      TRI2FE(1)

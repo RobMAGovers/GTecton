@@ -1,0 +1,272 @@
+Version     Date                 FEM/PLT   Change
+
+1.4         1989                   ALL     Original version
+1.51        September 1991         FEM     Updated plastic code, residual loads.
+2.00        October/November 1991  FEM     Added thermal code.
+
+2.01        March 1992             FEM     Debugged thermo-mechanical version
+                                           Diffusion creep code.
+2.02        August 1992            FEM     Linked nodes/no-tilt boundaries
+2.03        October 7 1992         FEM     Consistent plane strain thermal expansion loads.
+2.04        November 2 1992        FEM     Solution to diffusion eqn for surface uplifts
+                                           and sedimentary transport.
+2.05        November 6 1992        FEM     ITMODE=2 (initial temperatures)
+
+2.06        June 7 1993            FEM     Array bounds checking
+                                   FEM     Gravity using Talwani's method
+2.07        July 1 1993            FEM     SURF arrays always read in. NSED=switch.
+2.08        July 13 1993           FEM     Cohesion calculation based upon actual surface
+                                           height
+2.09        August 20 1993         FEM     Cohesion factor definition changed to include
+                                           density
+2.10        November 1993          FEM     Slippery nodes update (dimensioning)
+
+2.10        March 1994             FEM     ICVIS switch added
+2.11        June 1994              FEM     Thermal consequences of faults
+2.12        November 1994          FEM     Sparse solvers (Petsc)
+
+2.12        October 1995           FEM     Bug in ADDSN for triangles
+
+2.13        May 1997               FEM     Incompatible modes and fault intersections
+
+98.1        April 28 1998          ALL     Various modifications
+                                   FEM     Out-of-plane library
+
+99.1i       May 1999               FEM     Iterative solvers PetSc
+
+2000        August 2000            FEM     Spherical shell elements
+
+2001        July 2001              FEM     Consistent stress invariants calculations
+                                   FEM     Restart facility
+
+2003        June 2003              FEM     Tetrahedral elements
+
+2005        November 2005          FEM     Petsc-2.2.1
+
+2006        June 2006              PLT     GMT Support    
+
+2008        January 2008           FEM     Incompressible plastic flow
+
+2009        June 2009              FEM     Multiple output files (one per time step)
+
+2010        April 2010             FEM     Incorporation Petsc-2.3.2 or higher
+                                   FEM     Enabling of parallel computing
+                                   FEM     Enhanced sparsity pattern usage for parallel computing
+
+2013        May 2013               FEM     Multinode code runs
+                                   ALL     Filepaths no longer restricted to 80 chars. In stead to 255
+
+2014        February 2014          ALL     Upgraded to Fortran 2008 standard
+                                   FEM     PETSc 3.4.2
+
+2015        March 2015             ALL     Added axisymmetric solver and plotting
+
+2016        September 2016         ALL     Various bugs
+
+2017.3      March 2017             ALL     Slippery nodes working on multiptocessor runs.
+                                           Most of the implicit variables removed.
+                                           Part of the static memory allocation removed.
+
+2017.9      September 2017         ALL     Polysort has maximum polygon size increased from 10k to 10M
+                                           bugfix: plnplt 'slip' now gives good coordinates
+                                           bugfix: plnplt 'nbc' command now returns values.
+                                           bugfix: FEDSK files now contain correct velocities in ascii,
+                                           More implicitness removed, implicitly fixing bugs.
+                                           bugfix: Plt3d now correctly computes centers of elements.
+                                           bugfix: Plnplt now correctly writes strain rate files (rate command)
+                                           bugfix: ...and elemenental boundary condition file (ebc command)
+                                           plnplt now accepts blank lines in scripts
+                                           plnplt and plt3d help now take '? set' beside '? se'
+                                           elmside now gives an error if node or elem file is empty
+                                           Now use system soelim. Minimum version 1.21, 
+                                                 in stead of own implementation
+                                           bugfix: Elmside now scans element array with element index,
+                                                 and nodal point arrays with nodal point index, instead
+                                                 of both with the element index.
+                                           The main storage is now dynamically allocated. This limits
+                                                 the data size to the machine memory size, in stead of to
+                                                 the 2GB maximum. These allocations can be set in module 
+                                                 TempSrc/AAAB.F
+                                           bugfix: The content of environment variable MYTMP is now used as 
+                                                 temporary directory. Somehow this feature broke down in the
+                                                 past.
+                                           More implicit variables removed.
+                                           Plt3d has the 'edi' command fixed for total, x, y and z 
+                                                 displacements. Slippery and split displacements remain
+                                                 to be done. The VTU output still works well.
+                                           Plnplt now changed. After an 'edi slip' command, a regular edi 
+                                                 command gives regular edi, in stead of slippery displacement 
+                                           Contributions to the load vector from time dependent traction fixed.
+                                           bugfix: Plt3d has error value of elctr now proper initialised
+
+2017.10     September 2017         FEM     IWINX for non-period load fixed
+                     					   ISHELL/JSHELL bug in plnplt
+                                           Gmsh2tecton now works a lot faster, thanks to Matt Herman,
+                                                because a double loop over the elements has been replaced
+                                                by a lookup table and a single loop.
+                                           Bugfix, by Matt Herman: Plt3d; echo=2 no longer prints 
+                                                entire model input
+                                           Bugfix, by Matt Herman: di slippery now prints slippery disp 
+                                                instead of total displacement
+                                           Bugfix, by Matt Herman: di slippery no longer prints zeros for
+                                                monitored nodes
+                                           Bugfix, by Matt Herman: sampling in 3D no longer segfaults because
+                                                numFN was used where it had to be numFNglobal
+                                           Bugfix, by Matt Herman: sampling over nodes now gives physically 
+                                                correct values, as variable 'qnty' is passed correctly
+                                           Bugfix, by Matt Herman: sampling in 3D now takes the correct number
+                                                of strain matrix entries.
+                                           Bugfix, by Matt Herman: Attempting to sample outside the domain now
+                                                gives a warning in stead of an exit.
+                                           Bugfix, by Matt Herman: 3D contour prints all dispalcements 
+                                                components, in stead of only the first one.
+                                           Bugfix, by Matt Herman: printing slippery nodes in FEOUT does no 
+                                                longer crash when the global element ID > local n 
+                                                elements local
+                                           Bugfix, by Matt Herman: a 3D vertex can now have a maximum of a 100
+                                                elements that contain that vertex, in stead of 50, which
+                                                turned out to be not enough. A check has been build in to
+                                                see whether some peculiar might have more than a 100 element 
+                                                on a vertex, and gives an error message/hint to increase the 
+                                                num.
+                                                (similar for 2D, with a maximum of 20 increased to 30)
+                                           Bugfix, by Matt Herman: strain of sampled element in 3D now also 
+                                                print the z component, in stead of only x and y
+                                           Plt3d now fully explicit!
+                                           Buffer files are correctly written in MYTMP, in stead of in PWD
+                                           Optimization, by Matt Herman: adjacency tables generated much 
+                                                faster, when using slippery nodes.
+                                           Monitoring nodes in 3D fixed. Interpretation of monitoring 
+                                                intervals were interpreted incorrectly.
+                                           Thermal benchmarks included and validated, both on single and 
+                                                multiprocessor runs, validating:
+                                                - initial temperature fields
+                                                - heat flux boundary conditions
+                                                - heat production boundary conditions
+                                           Plnplt is now able to sample heat flux, using
+                                                - sample q ...  (see also '? sample' within plnplt)
+
+2018.02     February 2018           PLT    Bugfix, by Rob Govers: Volumetric strain rate now has the correct
+                                                value, in stead of the same as the strain.
+                                    PLT    Bugfix: plnplt and plt3d in line help now correctly diplays the 
+                                                help of the command that have a one letter command starting 
+                                                with their character. For example, '? wait', '? write', '? we' 
+                                                and '? wq' were all equivalent to '? w', before this fix.
+                                    PLT    Bugfix: in-line help of axiplt regarding stress and strain and 
+                                                strain rate now display components according in r, z, t frame, 
+                                                in stead of the pln frame of z, y and z.
+                                    ALL    All references to PETSc are cleaned up, making is easier to 
+                                                upgrade PETSc versions in the future.
+                                    ALL    Upgraded PETSc to 3.8.1. This allowes for better interaction with 
+                                                Fortran, and makes it easier to work with MUMPS.
+                                    ALL    Following this update, GTecton now runs on MPI 1.8.5; the version
+                                                supplied with PETSc 3.8.1.
+                                    ALL    With this update, several changes have been to the INSTALL file,
+                                                most importantly in the required package list, and the
+                                                default PETSc configure script.
+                                    ALL    Modifying petscsysdef.h during install procedure is no longer
+                                                necessary, by adding a compile flag.
+                                    ALL    Expanded error handling of the PETSc interface
+                                    PLT    plnplt now has the new command 'mesh', used to print properties
+                                                of the mesh as contour data for GMT. It has two arguments. 
+                                                The type of quality, and the filename to which to write it. 
+                                                Possible properties are:
+                                                - area       size of the elements
+                                                - sideratio  length of shortes side/length of longest side
+                                                - arearatio  area of inscribed circle/area of circumscribed
+                                                             circle times 4 for normalization
+                                                (note: arearatio tends to be harsher than sideratio)
+                                    FEM    Removed double allocation of part of the data structure.
+                                    PLT    Several plnplt commands are now also tested nightly,
+                                           The mesh quality command mentioned above among them.
+                                           This will be expanded upon in the future.
+                                    PLT    Sampling a point in Plt3d now starts searching at the element 
+                                           in which the previously sampled point was found, in stead of 
+                                           in element 1. This speeds up the sampling process. Sampling the
+                                           very first point still starts at element 1.
+
+2018.07     July 2018
+                                    PLT    Bugfix in Makefile. Plnplt and plt3d now properly depend on
+                                           AAAB.F in stead of on the obsolete and removed size.i
+                                    PLN    restart files now have support for more than 10 partitions,
+                                           as previsouly there was only a single digit space.
+                                           Up to 10k patitions are supported, now.
+                                    ALL    partition2paraview had been added to the tools, which creates
+                                           a mesh.vtu file from tecin.dat.partf.nps/elm. This can be read
+                                           in Paraview for mesh analysis/diagnostis
+                                    ALL    Intermediate filesnames FEM... have a time tag, to make sure they
+                                           are not confused with FEM files from other runs. The hours and
+                                           minutes and seconds were separated with a colon. Windows cannot
+                                           handle colons in filenames, and when running GTecton in a Linux
+                                           virtual machine on a Windows host, this caused GTecton to crash.
+                                           To fix this, the colons have been replaced by dashes, to match 
+                                           the date separators.
+                                    PLT    When a plot program does not recognize a command, it now tells
+                                           which command that was.
+                                    PLN    Solution vector is checked for inifinity and NaNs to detect
+                                           failures in an early stage of the simulation
+                                    PLN    Load vector and stiffness matrix are also tested for infinity 
+                                           and NaN entries, to prevent ugly crashes when they occur.
+                                    PLT    Added possibility to write displacement of monitored nodes in 3D
+                                    PLN    A check added whether the slippery nodes with only positive
+                                           or only negative weights assigned to it. This could result in
+                                           NaNs and inftys in the solution vector
+                                    PLN    TECIN.DAT now has an optional entry for the maximum number of 
+                                           neighbors, in order to limit the space allocated to
+                                           administrate those nodes. This entry comes after 
+                                           the number of materials, and is a 12 digit integer.
+                                           When not used, default for 3D is 50, and for 2D 30.
+                                           This maximum can be obtained with "minmax tecin.dat.partf.nps"
+                                           for GMT4 of "gmtinfo tecin.dat.partf.nps" for GMT5
+                                           and the maximum of the 6th entry in 3D, or the 5th in 2D.
+                                    PLN    some global arrays that are used when creating the parallel
+                                           numbering were not deallocated after use. They now are.
+                                           These are equationsmask, equationsmaskx, equationsmaskt,
+                                           equationsmaskxt and verticesmask, so that their space is available
+                                           when PETSc start the linear solve.
+                                    ALL    Compiled and tested with GCC 6.3.0.
+                                    ALL    Friction functionality has been added to slippery nodes.
+                                           In the code this is captured in #ifdef EXPERIMENTAL_FRICTION
+                                           blocks. Information on how to configure this is provided in
+                                           man 7 pln.
+
+Next...
+                                    PLN    in FEOUT, Euler angles bigger than 3 digits (-100 and lower)
+                                           are now printed correctly. Headers of the columns also lined
+                                           out better.
+                                    PLN    During previous release, writing of FEOUT broke down.
+                                           This has been fixed.
+                                    PLN    *** Static friction has been added. See the manuals for more 
+                                           documentation. ***
+                                    PLN    Because of this, differential strength is also written to the FEDSK files.
+                                  TOOLS    Elmside has a new algorithm to determine on which side of a fault
+                                           an element is located. This works better for curved faults.
+                                    PLN    A check is implemented to see whether each slippery node has
+                                           adjacent elements of both positive and negative signs.
+                                           If this is not the case but a solve is made anyway, 
+                                           solution vector has NaNs and/or infinities, which is very hard
+                                           to trace.
+                                  MERGE    A logarithm of zero caused mergefiles to not quite crash, 
+                                           but throw an IEEE_INVALID_FLAG IEEE_DIVIDE_BY_ZERO, which is now 
+                                           fixed.
+                                    ALL    Set up unit test infrastructure with a one test. Tests will be
+                                           added in the future.
+                                    PLT    sampling displacement and velocities very close to nodal
+                                           points gave strange and incorrect numbers. This has been fixed.
+									PLT    VTU write now also takes differential displacements and
+                                           differential velocities into account when plotting these.
+									PLT    'show dt' gave a segfault when there were only thermal 
+                                           or only mechanical timesteps. This has been fixed.
+                                           Output format is changed to write only the timesteps given.
+                                    PLT    Plt3d can plot a subsection of the domain that consists 
+										   of triangles. Particularly useful for the surface of a 
+                                           domain. This can be done with the syntax: set tag [number].
+                                           In this fashion, only displacement, velocities and 
+										   tractions can be written. More quantities may be added in 
+                						   the future.
+                                    PLT    Plt3d now plots correct differential velocities on 
+                                           deformed meshes.
+                                    PLT    The typo 'strain rate' has been corrected to 'strainrate'
+
+                                    PLT    Matt added 'xsec' command to take planar cross-sections through 3-D
+                                           volumes, defined by an origin and normal vector.

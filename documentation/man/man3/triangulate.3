@@ -1,0 +1,102 @@
+.TH TRIANGULATE 1 3/3/86
+.CM 1
+.SH "NAME"
+triangulate \- create a Delaunay triangulation of a set of points
+.SH "SYNOPSIS"
+.nf
+triangulate(points,n_pts,triang,p_n_triang,epsilon)
+double *points;
+int n_pts, *triang, *p_n_triang;
+double epsilon;
+.fi
+.SH "DESCRIPTION"
+.I
+Triangulate 
+accepts an array containing a list of points and produces
+another array that groups them into triangles according to the 
+Delaunay triangulation.
+The triangles tend to be as near to equilateral as possible.  The 
+property they are guaranteed to satisfy is that if a circle is 
+drawn through the vertices of one of the triangles no other point
+will lie within the circle.  The Delaunay triangulation fails to
+group the vertices of regular polygons into triangles.  
+.sp
+The points array is a two dimensional array of the form
+.sp
+.nf
+points[n_vts][2]
+.fi
+.sp
+where each pair in the array is a set of two double-precision
+floating-point numbers denoting the x and y positions of a texel. 
+Lint asks you to coerce this array to 
+.I
+(double *) 
+since it is
+referred to as a one-dimensional array within the procedure.
+.sp
+The 
+.I
+triang 
+array is also a two-dimensional array; this time of the
+form
+.sp
+.nf
+triang[n_triang][3]
+.fi
+.sp
+Each set of three elements of this array is a set of three indices into
+the points array.  The indices indicate the three vertices of a triangle.
+Lint asks you to coerce this array to 
+.I
+(int *)
+since it too must be referred to as a one-dimensional array within
+the procedure.
+Note that the numbers returned in 
+.I
+triang 
+index starting from zero 
+whereas the numbers printed out by the program triangulate index starting
+from one (since they are line numbers of a file).  The value of the
+pointer 
+.I
+p_n_triang 
+is set to the number of triangles created by the procedure.
+.sp
+.I
+Triangulate 
+accepts a parameter, 
+.I
+epsilon, 
+an angle measured in radians.
+Epsilon 
+determines the slop allowed when deciding whether three
+points are collinear.  i.e. if three points are within 
+.I
+epsilon
+radians of a straight line they are considered to form a straight
+line.  A high value will eliminate the perhaps unwanted triangles
+along a straight edge of an object.  By default 
+.I
+epsilon 
+is zero.
+Note that in the program the angle 
+.I
+epsilon
+is measured in degrees.
+.sp
+.i0
+.DT
+.PP
+.I
+Triangulate 
+can be used as a filter.  See 
+.I
+triangulate(1).
+.SH "SEE ALSO"
+triangulate(1)
+.SH "BUGS"
+.SH HISTORY
+.TP
+03-Mar-86  Michael J. Swain (swain) at University of Rochester
+Created.

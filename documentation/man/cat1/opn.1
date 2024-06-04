@@ -1,0 +1,278 @@
+OPN(1)                      General Commands Manual                     OPN(1)
+
+
+
+[1mNAME[0m
+       opn  - thermo-mechanical finite element program for 2,5-D geometry cal-
+       culations.
+
+[1mSYNOPSIS[0m
+       [1mopn [22m[options]
+
+[1mDESCRIPTION[0m
+       [4mopn[24m performs finite element (FE) calculations to solve  the  mechanical
+       equilibrium  as  well as the heat equation. Temperature-dependent mate-
+       rial properties and non-linear rheologies are implemented.  [4mopn[24m is  the
+       out-of-plane version of the massively parallel [1mGTECTON [22mFE package.
+
+       When  called  without  arguments, [4mopn[24m assumes that an input file, named
+       TECIN.DAT, exists in the current working directory. In this file, nodal
+       point  coordinates, mechanical boundary conditions, material properties
+       and elements are defined. This  file  also  contains  switch  variables
+       which  control,  for  instance, the solution mode. If thermal solutions
+       are requested, a second file (TEMPIN.DAT) is  required  to  define  the
+       thermal  problem.   Refer to textbooks on the finite element method and
+       the GTECTON equations manual (see LITERATURE) for the underlying  prin-
+       ciples.
+
+       The  typical  workflow of a opn run typically consists of the following
+       stages:
+
+       [1m1 [22mCreating the FEM input files: (a) Creating the  mesh  (see:  [4mtriangle[0m
+       and [4mshowme[24m); (b) Setting initial conditions and the boundary conditions
+       (see: [4mpicknps[24m and [4melmside[24m); (c) Partitioning the mesh (see:  [4mpartition[24m)
+       (d) Verifying the FEM input (see: [4mopnplt[24m and [4mGMT[24m).
+
+       [1m2 [22mComputing the finite element solution (see: [4mmpirun[24m and [4mqsub[24m)
+
+       [1m3 [22mMerging the FEM output files produced by all the threads (see: [4mmerge-[0m
+       [4mfiles[24m).  This step is also needed for a single-processor run.
+
+       [1m4 [22mPostprocessing and visualizing the FEM results(see: [4mopnplt[24m and [4mGMT[24m).
+
+
+[1mVERSION[0m
+       2021.08
+
+[1mOPTIONS[0m
+       [1mpartinfo=file[0m
+              Gives name of the file with partitioning information.  Note that
+              this  file  is  always required, even for single-processor runs.
+              The default file name is partition.info.
+
+       [1mas[cii] or nobi[nary][0m
+              Writes ASCII (human-readible) data to  [4mworkpath/FEDSK.DAT.[24m   The
+              default is binary.
+
+       [1mbi[nary] or noas[cii][0m
+              Write  binary FE-output data to [4mworkpath/FEDSK.DAT.[24m  This is the
+              default.
+
+       [1mtest[=0|1|2][0m
+              test[=0]: No testing (default)
+              test=1: HIGHLY RECOMMENDED AFTER YOU SET UP A NEW MODEL. Perform
+              additional (time consuming) tests on input data and continue: 1)
+              positively oriented elements, 2) nodes that have been defined as
+              both slippery and faulted.
+              test=2:  Perform  initialization  and  one  single time step (if
+              required) before stopping.
+
+       [1mecho=0 or noecho[0m
+              Silent mode, i.e. set echoing off (this is the default).
+
+       [1mecho, echo=1[0m
+              Normal echoing mode. Major stages of the program are reported.
+
+       [1mecho=2 [22mPrint info on mechanical input file  structure.  Typically  used
+              when "debugging" the mechanical input file.
+
+       [1mecho=3 [22mPrint what is written to "FEDSK.DAT" (only in "ASCII"-mode, oth-
+              erwise equivalent to "echo=1")
+
+       [1mecho=4 [22mPrint info on thermal input file structure. Typically used  when
+              "debugging" the thermal input file.
+
+       [1mecho=5 [22mPrint  info on the interaction between GTecton and PETSc.  Warn-
+              ing: This can yield a lot of output
+
+       [1mecho=6 [22mPrint info on the time spent in various part of the code. Useful
+              for profiling.
+
+       [1mecho=8 [22mPrint info on the health of the various threads. Due to the need
+              to synchronise the threads in order to produce readable  output,
+              this echo value will slow the code down considerably.
+
+       [1mdebug  [22mPrints extensive debugging information
+
+       [1mfedsk=[dirname/][basename][0m
+              Writes  FE-output according to how [4mdirname[24m and [4mbasename[24m are sup-
+              plied.
+
+              When only [4mbasename[24m is given, the output  will  be  written  into
+              [4mworkpath/basename.timestep.processorID[24m.
+
+              When  only [4mdirname/[24m is given -- the '/' is required in this case
+              --    the    output    will    be     written     into     [4mwork-[0m
+              [4mpath/dirname/FEDSK.DAT.timestep.processorID[24m.  (FEDSK  being  the
+              default output name.)
+
+              When both are given, the  output  will  be  written  into  [4mwork-[0m
+              [4mpath/dirname/basename.timestep.processorID[24m.
+
+              When  this  option is not used ([1mfedsk [22mshould not be used without
+              an  argument)  the   output   will   be   written   into   [4mwork-[0m
+              [4mpath/FEDSK.DAT.timestep.processorID[24m.
+
+
+       [1mfein=file[0m
+              Reads    input    from    [4mworkpath/file[24m    instead    of   [4mwork-[0m
+              [4mpath/TECIN.DAT,[24mwhich[4mis[24mthe[4mdefault.[0m
+
+       [1mfeout[=file][0m
+              Writes extensive information on input and output of the FE  cal-
+              culations   to  [4mworkpath/FEOUT.DAT[24m(default).   Optional  =  [4mfile[0m
+              replaces output file name [4mworkpath/FEOUT.DAT[24m  by  [4mworkpath/file.[0m
+              Note that this option does not work for runs on multiple proces-
+              sors.  For detailed information on the input on multiple-proces-
+              sors runs, consider using echo=22 instead.
+
+       [1mnofeout[0m
+              Does not write [4mworkpath/FEOUT.DAT.[24m  This is the default.
+
+       [1mnoso   [22mDuring  a  [4mopn[24m  run, all processors generate a temporary file in
+              [4mFEM/[24m containing the TECIN.DAT file with all the  included  files
+              explicitly  included.   These file file can easily become larger
+              than the available space on [4mFEM/[24m, when it is on /tmp, for  exam-
+              ple.  To  prevent this, include the files explicitly before run-
+              ning opn, using [1msoelim [22m(see: `man soelim'). During the run, pro-
+              vide the result of [1msoelim [22mas argument to the [1mfein [22moption and add
+              the [1mnoso [22moption.  This will cause all the processes to read  the
+              same complete file directly.
+
+       [1mout=file[0m
+              Merge standard output and standard error into [4mworkpath/file.[0m
+
+       [1mtempin=file[0m
+              Reads  thermal  FE-input  from  [4mworkpath/file[24m  instead  of [4mwork-[0m
+              [4mpath/TEMPIN.DAT[24m (the default file name).
+
+       [1mworkpath=directory[0m
+              Directory that contains the model files.  This  is  particularly
+              useful  when  submitting  a opn run to a cluster because compute
+              nodes of the cluster do not necessarily  know  where  the  model
+              input  files  are located. Defaults to current working directory
+              if not given.
+
+
+       [1mFILES  [22mThe  names  of   all   in   and   output   files   (except   for
+              [1mpetsc_options.txt[22m)  can  be  changed  (see OPTIONS). Names below
+              refer to defaults.
+
+   [1mInput files[0m
+       Except for [1mpetsc_options.txt[22m, all input files can be built  from  other
+       include-files.  Include-files  are indicated by .so [4mfile,[24m [1msoelim [22mcan be
+       used to examine the resulting file.  Input files all are in fixed  for-
+       mat.
+
+       [1mpetsc_options.txt[0m
+              If  the workpath contains this file, its content is read and the
+              options in it are used for the initialisation of  PETSc.   These
+              options  can  finetune  PETSc operation or give various outputs.
+              The file contains one option (and where  required  a  value)  on
+              each line. Example:
+
+              -ksp_view
+              -pc_type hypre
+              -pc_hypre_type pilut
+
+              will make PETSc:
+              - output details about the solver context (ksp = Krylov SubsPace
+              method)
+              - use the external preconditioning package HYPRE
+              - of the HYPRE package, use the pilut preconditioner.
+
+              Typical options set the preconditioners,  or  the  solver  algo-
+              rithm:
+
+              [1m-pc_type  TYPE [22mWhen using the [4mPETSc[24m iterative solvers, this flag
+              allows to set the preconditioner that is used. Note that not all
+              combinations  of  KSPs  and preconditioners give stable results!
+              Typical values for TYPE include:
+
+              PCNONE            "none"
+              PCJACOBI          "Jacobi"
+              PCSOR             "successive over relaxation"
+              PCLU              "lower-upper echelon decomposition
+
+              Many other preconditioners are included in PETSc and a  complete
+              list  can  be found at: https://www.mcs.anl.gov/petsc/petsc-cur-
+              rent/docs/manualpages/PC/PCType.html#PCType
+
+              Most of those preconditioners have  other  options  to  finetune
+              them  in turn, that can be found on the PETSc website as well by
+              clickin on the preconditioner.
+
+              [1m-ksp_type TYPE[0m
+
+              PETSc allow the user to experiment  with  various  solver  algo-
+              rithms. Typical values for TYPE include:
+
+              "none",
+              "cg" (Conjugate gradients)
+              "gmres" (Generalized minimal residual method)
+              "jacobi" (Jacobi),
+              "sor" (successive overrelaxation)
+              "lu" (direct solver, based on LU factorization)
+
+              Many  more methods are included in PETSc and a complete list can
+              be found on the PetSc site, under  Krylov  Subspace  Types  (KSP
+              types)
+
+
+       [1mTECIN.DAT[0m
+              FE  input  file. In this file the geometry of the finite element
+              mesh and the mechanical properties and boundary  conditions  are
+              defined.
+
+       [1mTEMPIN.DAT[0m
+              FE  input file. In this file the thermal properties and boundary
+              conditions are defined.
+
+   [1mOutput files[0m
+       [1mFEOUT.DAT[0m
+              FE output file. This file gives a verbose report of in- and out-
+              put  of  the finite element program. The file is in ASCII format
+              and tends to get very big for many applications. It is not  used
+              for  post-processing  and  is  intended to be used for elaborate
+              checking of input data only.
+
+       [1mFEDSK.DAT[0m
+              FE output file. Compact output  used  for  post-processing  (see
+              [4mopnplt[24m).   If  not  explicitly  set to ASCII (see OPTIONS), this
+              file has binary format.
+
+[1mENVIRONMENT[0m
+       Environment variable MYTMP defines the directory where temporary  files
+       are kept. If not set, temporary storage occurs in FEM/.
+
+       LD_LIBRARY_PATH  should  point to the PETSC home directory /lib in case
+       that sparse solvers are being used.
+
+[1mSEE ALSO[0m
+       opn(7), opnplt(1), triangle(1), partition(1), merge(1).
+
+[1mBUGS OR POSSIBLE FLAWS[0m
+       Report bugs to Rob  Govers  or  Lukas  van  de  Wiel  (email:  l.y.van-
+       dewiel@uu.nl).
+
+[1mLITERATURE[0m
+       [1mGTECTON equations manual[0m
+              R.  Govers,  L.Y.  van de Wiel and Wienand Drenth. All the equa-
+              tions that are coded into the FEM package.
+
+       [1mIntroduction to LAFEM modelling[0m
+              R. Govers. A suite of start problems, plus their  solutions  and
+              workflow from the course "Lithosphere Applications of the Finite
+              Element Method (LAFEM)".
+
+       [1mGTECTON programmers manual[0m
+              L.Y. van de Wiel. Notes about program  structure,  code  mainte-
+              nance, data structures, ...
+
+       [1mBenchmark guide[0m
+              R.  Govers. Full description of benchmark problems including in-
+              and output files.
+
+
+
+4th Berkeley Distribution       August 17, 2021                         OPN(1)

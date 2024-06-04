@@ -1,0 +1,290 @@
+.TH ELMSIDE 1 "July 6, 2021" "University of Utrecht"
+.UC 4
+.SH NAME
+elmside \- select element side numbers
+.SH SYNOPSIS
+\fBelmside\fP -l nodelist -e tecin.dat.partf.elm -n tecin.dat.partf.nps -d 2|3 [-swicov]
+.SH DESCRIPTION
+\fBelmside\fP is a support program for finite element code \fIGTECTON\fP, 
+to assist in applying boundary conditions along element boundaries and faults.
+For this purpose, it is used in conjunction with picknps (see: `man picknps'),
+as is shown in examples below. There are two possible uses of elmside.
+.PP
+usage \fI1\fP) Returning all the elements that have a side on a given boundary of the domain, and the side
+with which they border on the domain. 
+.PP
+usage \fI2\fP) Returning all the elements who have least one vertex in a given list of vertices and the 
+weight,
+which is +/- dependent on the normal vector. This can be used to distinguish between elements on either side
+of a (not necessarily straight) line (described by those points).
+.PP
+For both uses, the options \fB-n tecin.dat.partf.nps\fP, \fB-e tecin.dat.partf.elm\fP and \fB-l nodelist\fP are mandatory.
+.br
+For usage \fI1\fP, the option -s should be added.
+.br
+For usage \fI2\fP, the option -s should be omitted
+.br
+.PP
+where tecin.dat.partf.nps is the partitioned list of nodal points and tecin.dat.partf.elm the partitioned list of elements.
+.SH VERSION
+2021
+.SH ARGUMENTS
+.TP
+.BI "-d 2|3"
+The number of dimensions, i.e., 2 or 3.
+.TP
+.BI "-a 1|2|3"
+The algorithm used to determine sides. 1 = circle center based (default); 2 = 2D algorithm based on distance along a polygon (from \fBpolysort\fP); 3 = 2D algorithm based on whether element centers are located in- or outside an oriented (i.e. spatially sorted) closed polygon.
+.TP
+.BI "-e partitioned element file"
+\fIpln\fP or \fIopn\fP or \fIf3d\fP format partitioned connectivity file, typically tecin.dat.partf.elm
+.TP
+.BI "-l nodelist_file"
+List of node numbers, typically as output by \fIpicknps\fP. The nodes in the list do not need to be 
+spatially sorted for algorithm=1. For the other algorithms (\fB-a 2 or 3\fP), the nodes do need to be sorted by their coordinates.
+.TP
+.BI "-L loopfile"
+List of spatially sorted coordinates of a closed loop (same begin and end coordinates). Required for algorithm=3 (\fB-a 3\fP).
+.TP
+.BI "-n partitioned nodal point file"
+Optional \fIpln\fP of \fIopn\fP or \fIf3d\fP format partitioned nodal point coordinate file, typically tecin.dat.partf.nps
+Nodelist is assumed to be spatially ordered in this case.
+If these arguments are given, element sides are interpreted as fault sides. The output consists
+of the element number, node number, a zero, and the sign.
+.TP
+.BI "-o"
+Produces \fIopn\fP-compatible output.
+.TP
+.BI "-c"
+Adds the coordinates of the vertices to the output. This is only applied when the output
+contains one line for each vertex, as in usage 2. In usage 1, when every line contains an element and a side number,
+the coordinates are not displayed.
+.TP
+.BI "-s"
+Only output the element ID and the sides of the elements (in 1,2,3 in 2D, or in 1,2,3,4 in 3D), according to the
+convention used by pln and f3d. To reiterate:
+.PP
+       2D:   side 1: vertices 1 2         3D:   side 1: vertices 1 2 4
+                  2:          2 3                    2:          1 3 2
+                  3:          3 1                    3:          1 4 3
+                                                     4:          2 3 4
+.TP
+.BI "-w"
+Adds the weights to the output. One side is assigned the weight +1, the other side gets -1.
+The sign is determined by the orthogonal vector to the vector connecting two arbitrary points that are relatively far apart in the domain.
+(in 2D, at most a thousand points are selected randomly (depending on whether there are more in the nodelist), 
+and the two points that are furthest apart are selected to construct a basis and the orthogonal
+vector to determine the sign. In 3D, similarly, a 100 random points are selected and the three that span the triangle with the largest area are used for the basis.)
+This assures that the weights of curved surfaces can still be determined relatively well.
+.PP
+       If the orthogonal vector is positive in x, the weight of that side is +1. 
+.br
+       If it is negative in x, the weight is -1.
+.PP
+       If it neutral in x:
+.PP
+       If the orthogonal vector is positive in y, the weight of that side is +1. 
+.br
+       If it is negative in y, the weight is -1
+.PP
+       If it neutral in x and neutral in y:
+.PP
+       If the orthogonal vector is positive in z, the weight of that side is +1. 
+.br
+       If it is negative in z, the weight is -1
+.PP
+.TP
+.BI "-i"
+Invert the weights produced by the -w option.
+.TP
+.BI "-v"
+Verbose. When this option is added, elmside prints details about what it is doing. Mainly for debugging.
+.TE
+.SH EXAMPLES
+Let us have a simple 200 x 200 square domain of 3 x 3 nodes, numbered 1 
+through 9.
+.br 
+Let the domain be divided into triangular elements numbered I to VIII.
+.br
+Let us further have a boundary marked 2 (1 is reserved internally for the external 
+boundary) stretching vertically from vertex 4 to 6, as follows:
+.br
+
+.br
+
+.br
+              boundary 2
+.br
+ +---> x          |
+.br
+ |                |
+.br
+ V y             \\|/
+.br
+   
+.br
+  1               4               7
+.br
+  --------------------------------- 
+.br
+  |              /|              /| 
+.br
+  |   VIII     /  |  VI        /  | 
+.br
+  |          /    |          /    | 
+.br
+  |        /      |        /      | 
+.br
+  |      /        |      /        | 
+.br
+  |    /    II    |    /   VII    | 
+.br
+  |  /            |  /            | 
+.br
+  |/            5 |/            8 | 
+.br
+2 --------------------------------- 
+.br
+  |              /|              /| 
+.br
+  |   III      /  |   IV       /  | 
+.br
+  |          /    |          /    | 
+.br
+  |        /      |        /      | 
+.br
+  |      /        |      /        | 
+.br
+  |    /   I      |    /    V     | 
+.br
+  |  /            |  /            | 
+.br
+  |/              |/              | 
+.br
+  --------------------------------- 
+.br
+  3               6               9
+.br
+
+Let us finally assume the existence of files:
+.br
+tecin.dat.partf.nps, containing the partitioned nodal points and
+.br
+tecin.dat.partf.elm, containing the partitioned elements, according to the pln standard (see: `man 7 pln').
+The numbering of the elements is somewhat illogical, but it is created as such by 
+Triangle (see `man triangle').
+.br
+ 
+.br
+\fBExample 1\fP: Find all the elements attached to node 6.
+.br
+\fBCommand\fP picknps -d 2 -n tecin.dat.nps -x 100 -y -200 -e 1 > nodelist.dat
+.br
+\fBCommand\fP elmside -d 2 -l nodelist.dat -e tecin.dat.partf.elm -n tecin.dat.partf.nps
+.br
+.br
+\fBOutput\fP [elem id, node id].
+.PP
+           1           6
+.br
+           4           6
+.br
+           5           6 
+.PP
+\fBExample 2\fP: Find all the elements attached with a side to boundary 2.
+.br
+\fBCommand\fP picknps -d 2 -n tecin.dat.nps -m 2 > nodelist.dat
+.br
+\fBCommand\fP elmside -d 2 -l nodelist.dat -e tecin.dat.partf.elm -n tecin.dat.partf.nps -s
+.br
+\fBOutput\fP for every element: [elem id, local side nr.] (see `man 7 pln' for side numbering conventions).
+.PP
+           1    1
+.br
+           2    3
+.br
+           4    3
+.br
+           6    3
+.PP
+\fBExample 3\fP Find all the elements attached with a side or with a single point to boundary 2, and on which side they are.
+This is typically convenient when constructing slippery nodes in GTecton.
+.br
+\fBCommand\fP picknps -n tecin.dat.nps -m 2 > nodelist.dat
+.br
+\fBCommand\fP elmside -d 2 -l nodelist.dat -e tecin.dat.partf.elm -n tecin.dat.partf.nps -w -s
+.br
+\fBOutput\fP for every element/vertex combination: [elem id, node id, 0, weight]. Note: elements
+that have a side on the boundary (1,2,4 and 6, as seen in example 2) will appear twice in the list, once
+for each of their vertices on the boundary.
+.PP
+           1           6    0   -1
+.br
+           1           5    0   -1
+.br
+           2           4    0   -1
+.br
+           2           5    0   -1
+.br
+           3           5    0   -1
+.br
+           4           6    0    1
+.br
+           4           5    0    1
+.br
+           5           6    0    1
+.br
+           6           5    0    1
+.br
+           6           4    0    1
+.br
+           7           5    0    1
+.br
+           8           4    0   -1
+.PP
+\fBExample 4\fP Find all the elements attached with a side or with a single point to boundary 2, and their coordinates of the vertices, and on which 
+side they are.
+This is typically convenient when constructing slippery nodes in GTecton.
+.br
+\fBCommand\fP picknps -n tecin.dat.nps -m 2 > nodelist.dat
+.br
+\fBCommand\fP elmside -d 2 -l nodelist.dat -e tecin.dat.partf.elm -n tecin.dat.partf.nps -w -c
+.br
+\fBOutput\fP for every element/vertex combination: [elem id, node id, 0, weight, x, y]. Note: elements
+that have a side on the boundary (1,2,4 and 6, as seen in example 2) will appear twice in the list, once 
+for each of their vertices on the boundary.
+.PP
+           1           6    0   -1    100.00000000000000000   -200.00000000000000000
+.br
+           1           5    0   -1    100.00000000000000000   -100.00000000000000000
+.br
+           2           4    0   -1    100.00000000000000000      0.00000000000000000
+.br
+           2           5    0   -1    100.00000000000000000   -100.00000000000000000
+.br
+           3           5    0   -1    100.00000000000000000   -100.00000000000000000
+.br
+           4           6    0    1    100.00000000000000000   -200.00000000000000000
+.br
+           4           5    0    1    100.00000000000000000   -100.00000000000000000
+.br
+           5           6    0    1    100.00000000000000000   -200.00000000000000000
+.br
+           6           5    0    1    100.00000000000000000   -100.00000000000000000
+.br
+           6           4    0    1    100.00000000000000000      0.00000000000000000
+.br
+           7           5    0    1    100.00000000000000000   -100.00000000000000000
+.br
+           8           4    0   -1    100.00000000000000000      0.00000000000000000
+.PP 
+.br
+.SH SEE ALSO
+\fIpicknps(1)\fP, \fIpln(1)\fP, \fIpln(7)\fP, \fIopn(1)\fP, \fIopn(7)\fP
+.SH AUTHORS
+Rob Govers, Wienand Drenth, Lukas van de Wiel
+.SH BUGS
+The output of \fBelmside\fP is sorted by element number, even if the nodes input list is sorted differently 
+(e.g., spatially ordered). 
+.P
+Report bugs to Lukas van de Wiel (L.Y.vanderWiel@uu.nl)

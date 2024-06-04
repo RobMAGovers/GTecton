@@ -1,0 +1,32 @@
+SETPREM(1)                  General Commands Manual                 SETPREM(1)
+
+
+
+[1mNAME[0m
+       setprem  -  uses element center coordinates to assign radial elasticity
+       variations to elements following the  classical  Preliminary  Reference
+       Earth Model (PREM) of Dziewonsky and Anderson (1981).
+
+[1mSYNOPSIS[0m
+       [1msetprem[0m
+
+[1mDESCRIPTION[0m
+       [1msetprem  [22mis  a  support  program  for  finite element code [4mGTECTON[24m, and
+       specifically [1mf3d[22m, to assist in defining elastic properties in elements.
+       Node  and  element  file  names  are  assumed  to  be tecin.dat.nps and
+       tecin.dat.elm. The third node coordinate is assumed  to  represent  the
+       vertical distance with respect to the free surface. [1msetprep [22mwrites file
+       tecin.dat.elasticity, with the first record refering to the first  ele-
+       ment,  the  second to the second element and so on. The first column is
+       the element material number, second column  Young's  modulus  (Pa)  and
+       third column is Poisson's ratio.
+
+[1mSEE ALSO[0m
+       [4mf3d(1)[24m, [4mf3d(7)[0m
+
+[1mAUTHORS[0m
+       Rob Govers
+
+
+
+4th Berkeley Distribution        March 1, 2021                      SETPREM(1)

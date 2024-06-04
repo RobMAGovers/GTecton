@@ -1,0 +1,36 @@
+.TH GETAREA L "April 12, 2011" "University of Utrecht"
+.UC 4
+.SH NAME
+getarea \- get information about the mesh
+.SH SYNOPSIS
+\fBgetarea\fP basename
+.SH DESCRIPTION
+\fBgetarea\fP is a program to be used in conjunction with other auxiliary
+mesh programs such as \fIpicknps\fP.
+Its purpose is to present the user with some information on minimum and
+maximum values related to the mesh defined. These values may be of help
+for setting search criteria in a utility such as \fIpicknps\fP.
+The values returned are:
+.TS
+tab(@) expand;
+l.
+maximum element area
+minimum element area
+maximum distance between nodal points
+minimum distance between nodal points
+maximum element height
+minimum element height
+.TE
+.SH ARGUMENTS
+.TP
+.BI "basename"
+\fItriangle\fP base name, e.g., "domain.1".
+.SH EXAMPLE
+getarea domain.1
+.TE
+.SH SEE ALSO
+\fIpicknps\fP, \fItriangle\fP
+.SH AUTHORS
+Wienand Drenth
+.SH BUGS
+Report bugs to Wienand Drenth (wdrenth@geo.uu.nl).

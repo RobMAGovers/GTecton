@@ -1,0 +1,41 @@
+.TH POLYSORT L "July 15 2021" "University of Utrecht"
+.UC 4
+.SH NAME
+polysort \- sort coordinates along a polygon
+.SH SYNOPSIS
+\fBpolysort\fP -p polygon_file [-e eps] [-v] [-w] [filename]
+.SH DESCRIPTION
+\fBpolysort\fP is a program that sorts coordinates using an oriented
+(i.e., spatially sorted) polygon. It computes the along-polygon distance of 
+the coordinates from the first polygon coordinate and uses this distance to 
+sort the coordinates. Polysort returns the coordinate numbers.
+.SH ARGUMENTS
+.TP
+.BI "-p polygon_file"
+Oriented polygon used for sorting coordinates. Input consists of (x,y)-pairs.
+.TP
+.BI "-e eps"
+Number to specify precision of coordinate data.
+.TP
+.BI "-v"
+Verbose on.
+.BI "-w"
+Wrapping on. Wrapping is an obscure remainder from the past.
+.PI
+.TP
+.BI "filename"
+File containing coordinates that have to be ordered along the polygon. Input consists
+of node number and (x,y)-pair. 
+.PI
+.SH EXAMPLE
+.TP
+polysort -p Polygon_Eurasia.xy -e 0.01 trench_2
+which sorts the coordinates in trench_2 given the polygon 
+given in Polygon_Eurasia.xy
+.TE
+.SH SEE ALSO
+\fIpicknps\fP, \fIelmside\fP
+.SH AUTHORS
+Rob Govers, Wienand Drenth
+.SH BUGS
+Report bugs to Wienand Drenth (wdrenth@geo.uu.nl).

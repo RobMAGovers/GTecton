@@ -1,0 +1,35 @@
+SIGNALC(3F-BSD)                                                SIGNALC(3F-BSD)
+
+
+
+NNAAMMEE
+       signalc - change the action for a signal
+
+SSYYNNOOPPSSIISS
+       subroutine signalc (signum, proc, flag)
+       integer signum, flag
+       external proc
+
+DDEESSCCRRIIPPTTIIOONN
+       When  a  process  incurs a signal (see signal(3)) the default action is
+       usually to clean up and abort. The user may choose to write an alterna-
+       tive  signal handling routine. A call to signalc is the way this alter-
+       nate action is specified to the system.
+
+       signum is the signal number (see signal(3)). If flag is negative,  then
+       proc  must  be the name of the user signal handling routine. If flag is
+       zero or positive, then proc is ignored and the value of flag is  passed
+       to  the  system as the signal action definition. In particular, this is
+       how previously saved signal actions can be restored. Two possible  val-
+       ues  for  flag have specific meanings: 0 means "use the default action"
+       (See NOTES below), 1 means "ignore this signal".
+
+SSEEEE AALLSSOO
+       kill(1), signal(2)
+
+AAUUTTHHOORR
+       Rob Govers.
+
+
+
+4th Berkeley Distribution      December 15, 1993               SIGNALC(3F-BSD)

@@ -1,0 +1,4 @@
+femi
+femo fedsk.par
+sample d 0,500000,20000  -10000
+q!

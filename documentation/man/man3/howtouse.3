@@ -1,0 +1,17 @@
+.\"	"@(#)HowToUse.3	1.0	12/15/93";
+.TH HOWTOUSE 3F-BSD "December 15, 1993" "Penn State Univ"
+.UC 4
+.SH NAME
+HowToUse \- set string describing program call
+.SH SYNOPSIS
+subroutine HowToUse (String,Usage)
+character*(*) String, Usage
+.br
+.SH DESCRIPTION
+The HowToUse subroutine returns the string Usage, filled with the program
+name padded with the input string String. The Usage-string is typically
+used to describe a program call.
+.SH "SEE ALSO"
+getarg(3)
+.SH AUTHOR
+Rob Govers.

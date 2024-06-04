@@ -1,0 +1,21 @@
+# used option for flexure
+2
+# inputdata for flexure, name of the output file
+output.dat
+# variables for the model
+# Young Modulus (in Pa)
+7.5E10
+# Poisson ratio
+0.30
+# model thickness (in km)
+20
+# length (in km)
+500
+# Applied force (in N/m)
+1E5
+# xmin (in km)
+0
+# xmax (in km)
+500
+# dx (in km)
+10

@@ -1,0 +1,277 @@
+'\" t
+.TH AXI 1 "August 17, 2021" "Utrecht University"
+.UC 4
+.SH NAME
+axi \- thermo-mechanical finite element program for axisymmetric geometry
+calculations.
+.SH SYNOPSIS
+\fBaxi\fP [options]
+.SH DESCRIPTION
+\fIaxi\fP performs finite element (FE) calculations to solve the mechanical
+equilibrium as well as the heat equation. Temperature-dependent
+material properties and non-linear rheologies are implemented.
+\fIaxi\fP is the axisymmetric version of the massively parallel \fBGTECTON\fP FE package.
+.PP
+When called without arguments, \fIaxi\fP assumes that an input file, named
+TECIN.DAT, exists in the current working directory. In this file, 
+nodal point coordinates, mechanical boundary conditions, material properties
+and elements are defined. This file also contains switch variables
+which control, for instance, the solution mode. If thermal solutions are
+requested, a second file (TEMPIN.DAT) is required to define the thermal
+problem.
+Refer to textbooks on the finite element method and the GTECTON equations manual
+(see LITERATURE) for the underlying principles.
+
+The typical workflow of a axi run typically consists of the following stages:
+
+\fB1\fP Creating the FEM input files:
+(a) Creating the mesh (see: \fItriangle\fP and \fIshowme\fP);
+(b) Setting initial conditions and the boundary conditions (see: \fIpicknps\fP and \fIelmside\fP);
+(c) Partitioning the mesh (see: \fIpartition\fP)
+(d) Verifying the FEM input (see: \fIaxiplt\fP and \fIGMT\fP).
+
+\fB2\fP Computing the finite element solution (see: \fImpirun\fP and \fIqsub\fP)
+
+\fB3\fP Merging the FEM output files produced by all the threads (see: \fImergefiles\fP).
+This step is also needed for a single-processor run.
+
+\fB4\fP Postprocessing and visualizing the FEM results(see: \fIaxiplt\fP and \fIGMT\fP).
+
+.SH VERSION
+2021.08
+.SH OPTIONS
+.TP
+.BI "partinfo=file"
+Gives name of the file with partitioning information.
+Note that this file is always required, even for single-processor
+runs. The default file name is partition.info.
+.TP
+.BI "as[cii] or nobi[nary]"
+Writes ASCII (human-readible) data to
+.IR workpath/FEDSK.DAT.
+The default is binary.
+.TP
+.BI "bi[nary] or noas[cii]"
+Write binary FE-output data to
+.IR workpath/FEDSK.DAT.
+This is the default.
+.TP
+.BI "test[=0|1|2]"
+test[=0]: No testing (default)
+.br
+test=1: HIGHLY RECOMMENDED AFTER YOU SET UP A NEW MODEL. Perform additional (time consuming) tests on input data and continue: 1) positively oriented elements, 2) nodes that have been defined as both slippery and faulted.
+.br
+test=2: Perform initialization and one single time step (if required) before stopping.
+.TP
+.BI "echo=0 or noecho"
+Silent mode, i.e. set echoing off (this is the default). 
+.TP
+.BI "echo, echo=1"
+Normal echoing mode. Major stages of the program are reported.
+.TP
+.BI "echo=2"
+Print info on mechanical input file structure. Typically used
+when "debugging" the mechanical input file.
+.TP
+.BI "echo=3"
+Print what is written to "FEDSK.DAT" (only in "ASCII"-mode,
+otherwise equivalent to "echo=1")
+.TP
+.BI "echo=4"
+Print info on thermal input file structure. Typically used
+when "debugging" the thermal input file.
+.TP
+.BI "echo=5"
+Print info on the interaction between GTecton and PETSc.
+Warning: This can yield a lot of output
+.TP
+.BI "echo=6"
+Print info on the time spent in various part of the code. Useful for profiling.
+.TP
+.BI "echo=8"
+Print info on the health of the various threads. Due to the need to synchronise the threads in order to produce readable output, 
+this echo value will slow the code down considerably.
+.TP
+.BI "debug"
+Prints extensive debugging information 
+.TP
+.BI "fedsk=[dirname/][basename]"
+Writes FE-output according to how
+.IR dirname
+and
+.IR basename
+are supplied.
+
+When only \fIbasename\fP is given, the output will be written
+into \fIworkpath/basename.timestep.processorID\fP.
+
+When only \fIdirname/\fP is given -- the '/' is required in this case
+-- the output will be written into \fIworkpath/dirname/FEDSK.DAT.timestep.processorID\fP. (FEDSK
+being the default output name.)
+
+When both are given, the output will be written into \fIworkpath/dirname/basename.timestep.processorID\fP.
+
+When this option is not used (\fBfedsk\fP should not be used without an argument)
+the output will be written into \fIworkpath/FEDSK.DAT.timestep.processorID\fP.
+
+.TP
+.BI "fein=file"
+Reads input from
+.IR workpath/file
+instead of
+.IR workpath/TECIN.DAT, which is the default.
+.TP
+.BI "feout[=file]"
+Writes extensive information on input and output of the FE
+calculations to 
+.IR workpath/FEOUT.DAT (default).
+Optional =
+.IR file 
+replaces output file name
+.IR workpath/FEOUT.DAT
+by
+.IR workpath/file. 
+Note that this option does not work for runs on multiple processors.
+For detailed information on the input on multiple-processors runs, consider using echo=22 instead.
+.TP
+.BI "nofeout"
+Does not write 
+.IR workpath/FEOUT.DAT.
+This is the default.
+.TP
+.BI "noso"
+During a \fIaxi\fP run, all processors generate a temporary file in \fIFEM/\fP containing the TECIN.DAT file with all the included files explicitly included.
+These file file can easily become larger than the available space on \fIFEM/\fP, when it is on /tmp, for example. To prevent this, include the files explicitly before running axi,
+using \fBsoelim\fP (see: `man soelim'). During the run, provide the result of \fBsoelim\fP as argument to the \fBfein\fP option and add the \fBnoso\fP option.
+This will cause all the processes to read the same complete file directly.
+.TP
+.BI "out=file"
+Merge standard output and standard error into 
+.IR workpath/file.
+.TP
+.BI "tempin=file"
+Reads thermal FE-input from
+.IR workpath/file
+instead of 
+.IR workpath/TEMPIN.DAT
+(the default file name).
+.TP
+.BI "workpath=directory"
+Directory that contains the model files. This is particularly useful when submitting a axi run to a cluster because 
+compute nodes of the cluster do not necessarily know where the model input files are located. Defaults to current working
+directory if not given.
+.TP
+.SH FILES
+The names of all in and output files (except for \fBpetsc_options.txt\fP) can be changed (see OPTIONS). Names below refer to
+defaults.
+.I
+.SS "Input files"
+Except for \fBpetsc_options.txt\fP, all input files can be built from other include-files. Include-files are indicated by .so
+.IR file,
+\fBsoelim\fP can be used to examine the resulting file.
+Input files all are in fixed format.
+.TP
+.BI petsc_options.txt
+If the workpath contains this file, its content is read and the options in it are used for the initialisation of PETSc.
+These options can finetune PETSc operation or give various outputs. 
+The file contains one option (and where required a value) on each line. Example:
+
+-ksp_view 
+.br
+-pc_type hypre
+.br
+-pc_hypre_type pilut
+.br
+
+will make PETSc:
+.br
+- output details about the solver context (ksp = Krylov SubsPace method)
+.br
+- use the external preconditioning package HYPRE
+.br
+- of the HYPRE package, use the pilut preconditioner.
+.br
+
+Typical options set the preconditioners, or the solver algorithm:
+
+.BI "-pc_type TYPE"
+When using the
+.IR PETSc
+iterative solvers, this flag allows to set the preconditioner that is used. Note that not all combinations of KSPs and preconditioners give stable results! Typical values for TYPE include:
+.br
+
+PCNONE            "none"
+.br
+PCJACOBI          "Jacobi"
+.br
+PCSOR             "successive over relaxation"
+.br
+PCLU              "lower-upper echelon decomposition
+.br
+
+Many other preconditioners are included in PETSc and a complete list can be found at:
+https://www.mcs.anl.gov/petsc/petsc-current/docs/manualpages/PC/PCType.html#PCType
+
+Most of those preconditioners have other options to finetune them in turn, that can be found on the PETSc website as well by clickin on the preconditioner.
+
+.BI "-ksp_type TYPE"
+
+PETSc allow the user to experiment with various solver algorithms. Typical values for TYPE include:
+
+"none",
+.br
+"cg" (Conjugate gradients)
+.br
+"gmres" (Generalized minimal residual method)
+.br
+"jacobi" (Jacobi),
+.br
+"sor" (successive overrelaxation)
+.br
+"lu" (direct solver, based on LU factorization)
+.br
+
+Many more methods are included in PETSc and a complete list can be found on the PetSc site, under 
+Krylov Subspace Types (KSP types)
+
+.TP
+.BI TECIN.DAT
+FE input file. In this file the geometry of the finite element mesh and the mechanical properties and boundary conditions are defined.
+.TP
+.BI TEMPIN.DAT
+FE input file. In this file the thermal properties and boundary conditions
+are defined.
+.SS Output files
+.TP
+.BI FEOUT.DAT
+FE output file. This file gives a verbose report of in- and output
+of the finite element program. The file is in ASCII format and tends to
+get very big for many applications. It is not used for post-processing
+and is intended to be used for elaborate checking of input data only.
+.TP
+.BI FEDSK.DAT
+FE output file. Compact output used for post-processing (see \fIaxiplt\fP).
+If not explicitly set to ASCII (see OPTIONS), this file has binary format.
+.SH ENVIRONMENT
+Environment variable MYTMP defines the directory where temporary files are
+kept. If not set, temporary storage occurs in FEM/.
+.PP
+LD_LIBRARY_PATH should point to the PETSC home directory /lib in case that sparse
+solvers are being used.
+.SH SEE ALSO
+axi(7), axiplt(1), triangle(1), partition(1), merge(1).
+.SH "BUGS OR POSSIBLE FLAWS"
+Report bugs to Rob Govers or Lukas van de Wiel (email: l.y.vandewiel@uu.nl).
+.SH LITERATURE
+.TP
+.BI "GTECTON equations manual"
+R. Govers, L.Y. van de Wiel and Wienand Drenth. All the equations that are coded into the FEM package.
+.TP
+.BI "Introduction to LAFEM modelling"
+R. Govers. A suite of start problems, plus their solutions and workflow from the course "Lithosphere Applications of the Finite Element Method (LAFEM)".
+.TP
+.BI "GTECTON programmers manual"
+L.Y. van de Wiel. Notes about program structure, code maintenance, data structures, ...
+.TP
+.BI "Benchmark guide"
+R. Govers. Full description of benchmark problems including in- and output files.

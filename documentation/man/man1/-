@@ -1,0 +1,262 @@
+pln.1:218: warning [p 3, 10.7i]: cannot adjust line
+pln.1:220: warning [p 4, 0.0i]: cannot adjust line
+PLN(1)                                                                  PLN(1)
+
+
+
+NNAAMMEE
+       pln  - thermo-mechanical finite element program for 2-D geometry calcu-
+       lations.
+
+SSYYNNOOPPSSIISS
+       ppllnn [options]
+
+DDEESSCCRRIIPPTTIIOONN
+       _p_l_n performs finite element (FE) calculations to solve  the  mechanical
+       equilibrium  as  well as the heat equation. Temperature-dependent mate-
+       rial properties and non-linear rheologies are implemented.  _p_l_n is  the
+       2D version of the massively parallel GGTTEECCTTOONN FE package.
+
+       When  called  without  arguments, _p_l_n assumes that an input file, named
+       TECIN.DAT, exists in the current working directory. In this file, nodal
+       point  coordinates, mechanical boundary conditions, material properties
+       and elements are defined. This file also contains  switching  variables
+       which  control,  for  instance, the solution mode. If thermal solutions
+       are requested, a second file (TEMPIN.DAT) is assumed, which defines the
+       thermal  problem.  Refer to textbooks on the finite element method, the
+       GTECTON equations manual (see LITERATURE) for  the  underlying  princi-
+       ples.
+
+VVEERRSSIIOONN
+       2017.3.1
+
+OOPPTTIIOONNSS
+       aass[[cciiii]]
+              Writes   ASCII  data to _w_o_r_k_p_a_t_h_/_F_E_D_S_K_._D_A_T_.  Same as nnoobbii[[nnaarryy]].
+              The default is binary.
+
+       bbii[[nnaarryy]]
+              Write binary FE-output  data  to  _w_o_r_k_p_a_t_h_/_F_E_D_S_K_._D_A_T_.   Same  as
+              nnooaass[[cciiii]].  This is the default
+
+       eecchhoo==00 Silent  mode,  i.e.  set  echoing off (this is the default). See
+              also 'noecho
+
+       eecchhoo,, eecchhoo==11
+              Normal echoing mode. Major stages of the program are reported.
+
+       eecchhoo==22 Print info on mechanical input file  structure.  Typically  used
+              when "debugging" the mechanical input file.
+
+       eecchhoo==2222
+              Print  very  detailed  info  on mechanical input file structure.
+              Typically used when "debugging" the mechanical input  file.   It
+              is  well  advised to direct output to file, when using this echo
+              value.
+
+       eecchhoo==33 Print what is written to "FEDSK.DAT" (only in "ASCII"-mode, oth-
+              erwise equivalent to "echo=1")
+
+       eecchhoo==44 Print  info on thermal input file structure. Typically used when
+              "debugging" the thermal input file.
+
+       eecchhoo==55 Print info on the interaction between GTecton and PETSc.   Warn-
+              ing: This can yield a lot of output
+
+       eecchhoo==66 Print info on the time spent in various part of the code. Useful
+              for profiling.
+
+       eecchhoo==88 Print info on the health of the various threads. Due to the need
+              to  synchronise the threads in order to produce readable output,
+              this echo value will slow the code down considerably.
+
+       eecchhoo==99 Print info for general debugging. Here be dragons.
+
+       ffeeddsskk==[[ddiirrnnaammee//]][[bbaasseennaammee]]
+              Writes FE-output according to how _d_i_r_n_a_m_e and _b_a_s_e_n_a_m_e are  sup-
+              plied.
+
+              When  only  _b_a_s_e_n_a_m_e  is  given, the output will be written into
+              _w_o_r_k_p_a_t_h_/_b_a_s_e_n_a_m_e_._t_i_m_e_s_t_e_p_._p_r_o_c_e_s_s_o_r_I_D.
+
+              When only _d_i_r_n_a_m_e_/ is given -- the '/' is required in this  case
+              --     the     output     will    be    written    into    _w_o_r_k_-
+              _p_a_t_h_/_d_i_r_n_a_m_e_/_F_E_D_S_K_._D_A_T_._t_i_m_e_s_t_e_p_._p_r_o_c_e_s_s_o_r_I_D.  (FEDSK  being  the
+              default output name.)
+
+              When  both  are  given,  the  output  will be written into _w_o_r_k_-
+              _p_a_t_h_/_d_i_r_n_a_m_e_/_b_a_s_e_n_a_m_e_._t_i_m_e_s_t_e_p_._p_r_o_c_e_s_s_o_r_I_D.
+
+              When this option is not used (ffeeddsskk should not be  used  without
+              an   argument)   the   output   will   be   written  into  _w_o_r_k_-
+              _p_a_t_h_/_F_E_D_S_K_._D_A_T_._t_i_m_e_s_t_e_p_._p_r_o_c_e_s_s_o_r_I_D.
+
+              After a run, the output of the various processors  can  be  com-
+              bined  with  _m_e_r_g_e_f_i_l_e_s,  to  obtain  a  single  file  for  each
+              timestep. See `man mergefiles'.
+
+       ffeeiinn==ffiillee
+              Reads   input    from    _w_o_r_k_p_a_t_h_/_f_i_l_e    instead    of    _w_o_r_k_-
+              _p_a_t_h_/_T_E_C_I_N_._D_A_T_,which_i_sthe_d_e_f_a_u_l_t_.
+
+       ffeeoouutt[[==ffiillee]]
+              Writes  extensive information on input and output of the FE cal-
+              culations  to  _w_o_r_k_p_a_t_h_/_F_E_O_U_T_._D_A_T(default).   Optional  =   _f_i_l_e
+              replaces  output  file name _w_o_r_k_p_a_t_h_/_F_E_O_U_T_._D_A_T by _w_o_r_k_p_a_t_h_/_f_i_l_e_.
+              Note that this option does not work for runs on multiple proces-
+              sors.  For detailed information on the input on multiple-proces-
+              sors runs, consider using echo=22 instead.
+
+       nnooaass[[cciiii]]
+              Write binary FE-output  data  to  _w_o_r_k_p_a_t_h_/_F_E_D_S_K_._D_A_T_.   Same  as
+              bbii[[nnaarryy]].  This is the default
+
+       nnoobbii[[nnaarryy]]
+              Writes  ASCII  data  to  _w_o_r_k_p_a_t_h_/_F_E_D_S_K_._D_A_T_.  Same aass[[cciiii]].  The
+              default is to write data as binary
+
+       nnooeecchhoo Silent mode, i.e. set echoing off (this is the default). Same as
+              eecchhoo==00.
+
+       nnooffeeoouutt
+              Does not write _w_o_r_k_p_a_t_h_/_F_E_O_U_T_._D_A_T_.  This is the default.
+
+       nnoossoo   During  a  _p_l_n  run, all processors generate a temporary file in
+              _F_E_M_/ containing the TECIN.DAT file with all the  included  files
+              explicitly  included.   These file file can easily become larger
+              than the available space on _F_E_M_/. To prevent this,  include  the
+              files  explicitly  before  running  pln, using ssooeelliimm (see: `man
+              soelim'). During the run, provide the result of ssooeelliimm as  argu-
+              ment  to  the  ffeeiinn  option  and add the nnoossoo option.  This will
+              cause all the processes to read the complete file directly.
+
+       oouutt==ffiillee
+              Merge standard output and standard error into _w_o_r_k_p_a_t_h_/_f_i_l_e_.
+
+       tteemmppiinn==ffiillee
+              Reads thermal  FE-input  from  _w_o_r_k_p_a_t_h_/_f_i_l_e  instead  of  _w_o_r_k_-
+              _p_a_t_h_/_T_E_M_P_I_N_._D_A_T (the default file name).
+
+       tteesstt   Perform  initialization  and  one single time step (if required)
+              before stopping.
+
+       wwoorrkkppaatthh==ddiirreeccttoorryy
+              Directory that contains the model files.  This  is  particularly
+              useful  when  submitting  a pln run to a cluster because compute
+              nodes of the cluster do not necessarily  know  where  the  model
+              input  files  are located. Defaults to current working directory
+              if not given.
+
+       --ppcc__ttyyppee TTYYPPEE
+              When using the _P_E_T_S_c iterative solvers, this flag allows to  set
+              the  preconditioner  that  is used. Note that not all KSP's give
+              stable results! TYPE should be one of "none", "jacobi" (Jacobi),
+              "sor" (successive overrelaxation), "lu" (direct solver, based on
+              LU factorization, DEFAULT  for  mechanical  problem),  "bjacobi"
+              (block  Jacobi),  "eisenstat"  (symmetric  successive overrelax-
+              ation, symmetric Gauss-Seidel  with  Eisenstat's  trick),  "ilu"
+              (incomplete  factorization,  DEFAULT for thermal problem), "icc"
+              (Incomplete Cholesky factorization), "asm"  (additive  Schwarz),
+              "spai" (Sparse Approximate Inverse method), "nn" (Balancing Neu-
+              mann-Neumann), "cholesky" (Cholesky factorization  based  direct
+              solver), "pbjacobi" (Point block Jacobi), "prometheus" (diagonal
+              scaling). More information can be found on the _P_E_T_S_c website.
+
+       --kksspp__ttyyppee TTYYPPEE
+              When using the _P_E_T_S_c iterative solvers, this flag can be used to
+              set the Krylov subspace method (KSP). Not all types work for the
+              GTECTON matrix problem! TYPE should be one of "richardson" (pre-
+              conditioned Richardson), "chebychev" (preconditioned Chebychev),
+              "cg" (conjugate gradient, DEFAULT  for  mechanical  and  thermal
+              problems),  "cgne"  (cheeper preconditioned conjugate gradient),
+              "gmres"  (Generalized  Minimal  Residual,  DEFAULT  for  thermal
+              advection   problem),  "fgmres"  (Flexible  Generalized  Minimal
+              Residual), "tcqmr" (variant of quasi minimal  residual),  "bcgs"
+              (Stabilized  version  of  BiConjugate Gradient Squared), "bcgsl"
+              (Enhanced BiCGStab), "cgs" (Conjugate  Gradient  Squared),  "cr"
+              (preconditioned  conjugate  residuals),  "lsqr" (least squares),
+              "bicg"  (Biconjugate  gradient),  "minres"  (Minimum  Residual),
+              "symmlq"  (SYMMLQ).   More information can be found on the _P_E_T_S_c
+              website.
+
+       --kksspp__rrttooll NNUUMMBBEERR
+              Sets relative tolerance for iterative solver in _P_E_T_S_c (default =
+              1e-7).
+
+FFIILLEESS
+       The  names of all files can be changed (see OPTIONS). Names below refer
+       to defaults.
+
+   IInnppuutt ffiilleess
+       Input files can be built from other  include-files.  Include-files  are
+       indicated  by  .so  _f_i_l_e_,  ssooeelliimm  can be used to examine the resulting
+       file.  Input files all are in fixed format.
+
+       ppeettsscc__ooppttiioonnss..ttxxtt
+              If the workpath contains this  file,  the  content  is  read  as
+              options for the initialisation of PETSc.  For available options,
+              see PETSC documentation, such as:
+
+              http://www.mcs.anl.gov/petsc/petsc-current/docs/manual-
+              pages/Sys/PetscInitialize.html and
+
+              http://www.mcs.anl.gov/petsc/petsc-current/docs/manual-
+              pages/Mat/MatView.html etc.
+
+       TTEECCIINN..DDAATT
+              FE input file. In this file the geometry of the  finite  element
+              mesh  and  the mechanical properties and boundary conditions are
+              defined.
+
+       TTEEMMPPIINN..DDAATT
+              FE input file. In this file the thermal properties and  boundary
+              conditions are defined.
+
+   OOuuttppuutt ffiilleess
+       FFEEOOUUTT..DDAATT
+              FE output file. This file gives a verbose report of in- and out-
+              put of the finite element program. The file is in  ASCII  format
+              and  tends to get very big for many applications. It is not used
+              for post-processing and is intended to  be  used  for  elaborate
+              checking of input data only.
+
+       FFEEDDSSKK..DDAATT
+              FE  output  file.  Compact  output used for post-processing (see
+              _p_l_n_p_l_t).  If not explicitly set to  ASCII  (see  OPTIONS),  this
+              file has binary format.
+
+EENNVVIIRROONNMMEENNTT
+       Environment  variable MYTMP defines the directory where temporary files
+       are kept. If not set, temporary storage occurs in FEM/.
+
+       LD_LIBRARY_PATH should point to the PETSC home directory /lib  in  case
+       that sparse solvers are being used.
+
+SSEEEE AALLSSOO
+       pln(7), plnplt(1), triangle(1)
+
+BBUUGGSS OORR PPOOSSSSIIBBLLEE FFLLAAWWSS
+       Report  bugs  to  Rob  Govers  or  Lukas  van  de Wiel (email: l.y.van-
+       dewiel@uu.nl).
+
+LLIITTEERRAATTUURREE
+       GGTTEECCTTOONN eeqquuaattiioonnss mmaannuuaall
+              R. Govers, L.Y. van de Wiel and Wienand Drenth.  All  the  equa-
+              tions that are coded into the FEM package.
+
+       IInnttrroodduuccttiioonn ttoo LLAAFFEEMM mmooddeelllliinngg
+              R.  Govers.  A suite of start problems, plus their solutions and
+              workflow from the course "Lithosphere Applications of the Finite
+              Element Method (LAFEM)".
+
+       GGTTEECCTTOONN pprrooggrraammmmeerrss mmaannuuaall
+              L.Y.  van  de  Wiel. Notes about program structure, code mainte-
+              nance, data structures, ...
+
+       BBeenncchhmmaarrkk gguuiiddee
+              R. Govers. Full description of benchmark problems including  in-
+              and output files.
+
+
+
+4th Berkeley Distribution      October 12, 2017                         PLN(1)

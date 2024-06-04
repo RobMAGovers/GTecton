@@ -1,0 +1,71 @@
+PICKNPS(1)                  General Commands Manual                 PICKNPS(1)
+
+
+
+[1mNAME[0m
+       picknps - select node numbers
+
+[1mSYNOPSIS[0m
+       [1mpicknps  [22m-n  tecin.dat.nps  [-d 2|3] [-s selectionfile] [-m marker] [-x
+       xvalue[:xmax]] [-y yvalue[:ymax]] [-z zvalue[:zmax]] [-e epsilon]
+
+[1mDESCRIPTION[0m
+       [1mpicknps [22mis a program for selecting node number on the basis of coloring
+       (markers) or coodinate. This greatly simplifies application of boundary
+       conditions, or further selection of element  sides  with  [4melmside[24m.   It
+       works directly with the [4mGTECTON[24m nodal points files.
+
+[1mVERSION[0m
+       2018
+
+[1mARGUMENTS[0m
+       [1m-n tecin.dat.nps[0m
+              [4mpln[24m or [4mopn[24m format nodal point coordinate file.
+
+       [1m-s selectionfile[0m
+              [4mselectionfile[24m contains markers, x-coordinates, y-coordinates, or
+              pairs of x and y-coordinates.  Grouping selection criteria  will
+              be  more  efficient than calling [4mpicknps[24m consecutively with dif-
+              ferent criteria.
+
+       [1m-d dimension[0m
+              Specify  the  spatial  dimension  of  the  problem  (2  or   3).
+              Default=2.
+
+       [1m-m marker[0m
+              [4mtriangle[24m  marker,  for  instance  of some boundary. Note that an
+              error margin is not required here. Also note  that  marker  zero
+              typically  selects all the nodes on the inside of the domain, so
+              be warned.
+
+       [1m-x xvalue[0m
+              Node x-coordinate.
+
+       [1m-y yvalues[0m
+              Node y-coordinate.
+
+       [1m-z zvalues[0m
+              Node z-coordinate (only in three dimensions).
+
+       [1m-e epsilon[0m
+              Search radius for coordinate selection. Use if coordinate is not
+              found. To prevent numerical errors when searching around coordi-
+              nates, it is advised to always use a small radius, as in [1m-e 1[0m
+
+[1mEXAMPLES[0m
+       picknps -n tecin.dat.nps -m 6
+
+       picknps -n tecin.dat.nps -s select.s -e 10 -d 2
+
+[1mSEE ALSO[0m
+       [4mtriangle(1)[24m, [4melmside[24m(1), [4mpln(1)[24m, [4mopn(1)[0m
+
+[1mAUTHORS[0m
+       Rob Govers, Lukas van de Wiel
+
+[1mBUGS[0m
+       Report bugs to Rob Govers (r.govers@uu.nl).
+
+
+
+4th Berkeley Distribution        July 20, 2021                      PICKNPS(1)

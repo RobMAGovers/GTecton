@@ -1,0 +1,60 @@
+OPNPLT(1)                   General Commands Manual                  OPNPLT(1)
+
+
+
+[1mNAME[0m
+       opnplt - finite element post-processor.
+
+[1mSYNOPSIS[0m
+       [1mopnplt [22m[options]
+
+[1mDESCRIPTION[0m
+       [4mopnplt[24m  is  an  interactive  program  for examining finite element (FE)
+       input and output data. [4mopnplt[24m  can  also  be  viewed  as  an  interface
+       between FE program [4mopn[24m and plot program [4mp[24m.
+
+       When  called  without a file argument, [4mopnplt[24m reads commands from stan-
+       dard input (stdin). On-line help is provided in this  interactive  mode
+       in  by  typing  "?"  or  for example "? femi".  When a file argument is
+       given, commands are read from this file until,  after  the  end-of-file
+       (EOF) has been reached succesfully, commands are read from stdin.
+
+[1mVERSION[0m
+       2011
+
+[1mOPTIONS[0m
+       [1mnoecho [22mSilent mode, i.e. set echoing off (this is the default).
+
+       [1mecho   [22mEchoing mode. Major stages of the program are reported.
+
+       [1mfile   [22mCommands file name.
+
+[1mFILES[0m
+       Files  which  are special to the program are described more extensively
+       in the [4mopn[24m(L) manual pages.  More  specific,  FE  input  files  are  by
+       default  assumed  to  be  "TECIN.DAT" and "TEMPIN.DAT". FE output is by
+       default assumed to reside in "FEDSK.DAT".
+
+[1mENVIRONMENT[0m
+       Environmental variable PU should be set to the subdirectory "putil"  of
+       the directory where [4mp[24m resides.
+
+       If set, variable MYTMP is the directory where temporary files are kept.
+       If not set, temporary storage occurs in /tmp.
+
+       Under AIX/3.2, environment  variable  XLFRTEOPTS  affects  the  program
+       behavior  after  I/O-errors have been encountered. For optimum behavior
+       of [4mopnplt[24m, XLFRTEOPTS should be set to "cnverr=yes".
+
+[1mSEE ALSO[0m
+       opn(1), p(1)
+
+[1mBUGS[0m
+       Report bugs to Rob Govers (email: r.govers@uu.nl).
+
+[1mAUTHORS[0m
+       Written by Rob Govers.
+
+
+
+4th Berkeley Distribution       August 26, 2013                      OPNPLT(1)

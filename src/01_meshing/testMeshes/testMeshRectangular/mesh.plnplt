@@ -1,0 +1,12 @@
+# read input file
+femi dummyTECIN.dat
+# shell command to check if data directory exists
+!test -d plnplt || mkdir plnplt
+set npi 1
+set elmi 1
+np    plnplt/pointCoordinates.dat
+conn  plnplt/connectivity.dat
+grid  plnplt/meshEdges.dat
+part  plnplt/partitions.dat
+bound plnplt/partitionBoundaries.dat
+q!

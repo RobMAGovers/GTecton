@@ -1,0 +1,53 @@
+.TH PICKNPS 1 "July 20, 2021" "University of Utrecht"
+.UC 4
+.SH NAME
+picknps \- select node numbers
+.SH SYNOPSIS
+\fBpicknps\fP -n tecin.dat.nps [-d 2|3] [-s selectionfile] [-m marker] [-x xvalue[:xmax]] [-y yvalue[:ymax]] [-z zvalue[:zmax]] [-e epsilon]
+.SH DESCRIPTION
+\fBpicknps\fP is a program for selecting node number
+on the basis of coloring (markers) or coodinate. This greatly simplifies
+application of boundary conditions, or further selection of element sides with
+\fIelmside\fP.
+It works directly with the \fIGTECTON\fP nodal points files.
+.SH VERSION
+2018
+.SH ARGUMENTS
+.TP
+.BI "-n tecin.dat.nps"
+\fIpln\fP or \fIopn\fP format nodal point coordinate file.
+.TP
+.BI "-s selectionfile"
+\fIselectionfile\fP contains markers, x-coordinates, y-coordinates, or pairs of x and y-coordinates.
+Grouping selection criteria will be more efficient than calling \fIpicknps\fP consecutively with different criteria.
+.TP
+.BI "-d dimension"
+Specify the spatial dimension of the problem (2 or 3). Default=2.
+.TP
+.BI "-m marker"
+\fItriangle\fP marker, for instance of some boundary. Note that an error margin is not required here. Also note that marker zero typically selects all the nodes on the inside of the domain, so be warned.
+.TP
+.BI "-x xvalue"
+Node x-coordinate.
+.TP
+.BI "-y yvalues"
+Node y-coordinate.
+.TP
+.BI "-z zvalues"
+Node z-coordinate (only in three dimensions).
+.TP
+.BI "-e epsilon"
+Search radius for coordinate selection. Use if coordinate is not found. To prevent numerical errors 
+when searching around coordinates, it is advised to always use a small radius, as in \fB-e 1\fP
+.TE
+.SH EXAMPLES
+picknps -n tecin.dat.nps -m 6 
+
+picknps -n tecin.dat.nps -s select.s -e 10 -d 2
+.TE
+.SH SEE ALSO
+\fItriangle(1)\fP, \fIelmside\fP(1), \fIpln(1)\fP, \fIopn(1)\fP
+.SH AUTHORS
+Rob Govers, Lukas van de Wiel
+.SH BUGS
+Report bugs to Rob Govers (r.govers@uu.nl).

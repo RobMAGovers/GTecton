@@ -1,0 +1,17 @@
+.\"	"@(#)flush.3	1.0	12/15/93";
+.TH FLUSH 3F-BSD "December 15, 1993" "Penn State Univ"
+.UC 4
+.SH NAME
+flush \- issue a shell command
+.SH SYNOPSIS
+subroutine flush(unit)
+.br
+integer unit
+.br
+.SH DESCRIPTION
+If unit points to an open logical unit, fflush() causes any buffered data
+for the logical unit to be written to that unit.
+.SH "SEE ALSO"
+fflush(3S)
+.SH AUTHOR
+Rob Govers.

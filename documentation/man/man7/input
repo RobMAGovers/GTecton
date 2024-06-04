@@ -1,0 +1,160 @@
+        read TITLE (a80)
+        read MAXC,MAXR,NPTS,NBC,NWINK,NMAT,NDEV,LTYPE,LPLOT,MAP,IJSW  (12i5)
+        for (k=1; k<=NPTS; k++) {
+            read INTEST,I,J,KDELTA,POLAR,R1,Z1,R2,Z2,RC,ZC
+                (5i3,6f10.0)
+        }
+        if (NBC > 0) {
+            for (k=1;k<=n;k++) {
+                read INTEST,I,J,KDELTA,IDOF,IBC,BC1,BC2
+		    (6i5,2f10.0)
+            }
+        if (NWINK > 0) {
+            for (k=1;k<=n;k++) {
+                read INTEST,I,J,KDELTA,IDOF,IWINK,WINK1,WINK2
+		    (6i5,2f10.0)
+            }
+        if (NMTCD > 0) {
+            for (k=1;k<=n;k++) {
+                read i1,i2,i2,j2,no (5i5)
+            }
+        if (NLTCD > 0) {
+        for (k=1;k<=n;k++) {
+            read i1,i2,i2,j2,no (5i5)
+        }
+
+
+================================================================================
+	CONTROL PARAMETERS
+================================================================================
+
+TITLE . . . . . the name of the problem, etc.
+MAXC  . . . . . maximum value of i in input data (i runs over columns!)
+MAXR  . . . . . maximum value of j in input data (j runs over rows!)
+NPTS  . . . . . number of nodal point input records
+NBC . . . . . . number of nodal boundary condition inputs
+NWINK . . . . . number of Winkler force input records
+NMAT  . . . . . number of deviating material input records
+NDEV  . . . . . number of deviating element type input records
+LTYPE . . . . . element type selection
+        = 3,  generate  3 node triangles
+        = 4,  generate  4 node quadrilaterals
+        = 6,  generate  6 node triangles
+        = 8,  generate  8 node quadrilaterals
+        = 9,  generate  9 node triangles
+        = 12, generate 12 node quadrilaterals
+LPLOT . . . . . plotting options
+        = 0,  no plots
+        = 1,  plot r,z mesh
+        = 2,  plot i,j mesh
+        = 3,  plot both r,z and i,j meshes
+MAP . . . . . . interpolation mode for unspecified points
+        = 0,  mapping using Laplace`s equation (iterative)
+              This mode is not yet implemented.
+        = 1,  two point linear interpolation between bounding points on the
+              j line. This mode is not yet implemented.
+        = 2,  four point interpolation between given points on the i-j line.
+        = 3,  eight point interpolation bewteen given points on the i and j
+              lines plus four 'corner' points. This mode is not yet implemented.
+IJSW . . . . .  i-j switching mode for bandwidth purposes
+        = 0,  do not allow reduction of bandwidth by switching i and j
+        = 1,  perform switching if this leads to reduced bandwidth
+
+
+================================================================================
+	READING NODAL POINT DATA
+================================================================================
+
+read INTEST,I,J,KDELTA,POLAR,R1,Z1,R2,Z2,RC,ZC		(5i3,6f10.0)
+
+    INTEST  . . . . . Control variable for increments in i-j space
+
+           | INTEST Istep Jstep  New coordinate  |
+           |   0      0     0         YES        |      
+           |   1      1     0         YES        |      
+           |   2      0     1         YES        |      
+           |   3      1    -1         YES        |      
+           |   4      1     1         YES        |      
+           |   5      1     0          NO        |      
+           |   6      0     1          NO        |      
+           |   7      1    -1          NO        |      
+           |   8      1     1          NO        |      
+
+    I,J . . . . . . . . . . . column and row numbers in i-j space
+    KDELTA  . . . . . . . . . Number of additional points beyond I,J
+    POLAR . . . . . . . . . . R,Z interpretation mode.
+        = 0, input cartesian coordinates
+       <> 0, input interpreted as polar coordinates relative to circel whose 
+             center is (RC,ZC). R=radius of circle, Z=angle [deg] from R-axis.
+    R . . . . . . . . . . . . x- or radius-coordinate of point corresponding
+                              to (I,J). Interpretation depends on POLAR.
+    Z . . . . . . . . . . . . y- or angle-coordinate of point corresponding
+                              to (I,J). Interpretation depends on POLAR.
+    R1,Z1,R2,Z2 . . . . . . . correspond with first and last I,J-pairs.
+    RC,ZC . . . . . . . . . . Circle center coordinates (cartesian).
+
+    It depends on INTEST and POLAR whether R1,Z1,R2,Z2,RC,ZC need to be given.
+
+
+================================================================================
+	READING BOUNDARY CONDITION DATA
+================================================================================
+					
+read INTEST,I,J,KDELTA,IDOF,IBC,BC1,BC2		(6i5,2f10.0)
+
+    INTEST  . . . . . Control variable for increments in i-j space
+
+           | INTEST Istep Jstep  New coordinate  |
+           |   1      1     0         YES        |      
+           |   2      0     1         YES        |      
+           |   3      1    -1         YES        |      
+           |   4      1     1         YES        |      
+
+    I,J . . . . . . . . . . . column and row numbers in i-j space
+    KDELTA  . . . . . . . . . Number of additional points beyond I,J
+    IDOF  . . . . . . . . . . degree of freedom on which bc will be specified
+    IBC . . . . . . . . . . . Boundary condition code
+    BC1 and BC2 . . . . . . . Boundary condition
+
+
+================================================================================
+	READING WINKLER FORCES DATA
+================================================================================
+					
+read INTEST,I,J,KDELTA,IDOF,IWINK,WINK1,WINK2		(6i5,2f10.0)
+
+    INTEST  . . . . . Control variable for increments in i-j space
+
+           | INTEST Istep Jstep  New coordinate  |
+           |   0      0     0         YES        |      
+           |   1      1     0         YES        |      
+           |   2      0     1         YES        |      
+           |   3      1    -1         YES        |      
+           |   4      1     1         YES        |      
+
+    I,J . . . . . . . . . . . column and row numbers in i-j space
+    KDELTA  . . . . . . . . . Number of additional points beyond I,J
+    IDOF  . . . . . . . . . . degree of freedom on which Winkler force will be
+			      specified
+    IWINK . . . . . . . . . . Winkler force code
+    WINK1 and WINK2 . . . . . Winkler forces
+
+
+================================================================================
+	READING MATERIAL DATA
+================================================================================
+
+If elements with material numbers not equal to 1 need to be generated,
+NMTCD > 0. Input data I1, J1, I2, J2 refer to lower left and upper
+right coordinates in I-J space of the element and NO is the material number
+the element should obtain.
+
+
+================================================================================
+	READING DEVIATING ELEMENTS DATA
+================================================================================
+
+Likewise, if elements need to be generated that have a different number of
+nodes than the typical element, NLTCD > 0. Again, input data I1, J1, I2, J2
+refer to lower left and upper right coordinates in I-J space of the element
+and NO is the element type (see also LTYPE).

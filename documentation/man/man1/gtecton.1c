@@ -1,0 +1,41 @@
+GTECTON(1)                  General Commands Manual                 GTECTON(1)
+
+
+
+[1mNAME[0m
+       gtecton - thermo-mechanical finite element software package
+
+[1mINTRODUCTION[0m
+       [4mgtecton[24m performs finite element (FE) calculations to solve the mechani-
+       cal equilibrium as well as  the  heat  equation.  Temperature-dependent
+       material properties and non-linear rheologies are implemented.  Differ-
+       ent versions of the  program  refer  to  different  dimensionality  and
+       solvers
+
+[1mGTECTON OVERVIEW[0m
+       [1mpln    [22mis the 2D version of GTECTON. "pln" stands for "plane". It comes
+              in two varieties: [4mpln-D[24m uses the direct  solver,  [4mpln[24m  uses  the
+              iterative solvers.
+
+       [1mopn    [22mis the 2,5D version of GTECTON. "opn" stands for "out of plane",
+              meaning that the model geometry is 2D, but that the code  solves
+              for 3D displacements etc.  It comes in two varieties: [4mopn-D[24m uses
+              the direct solver, [4mopn[24m uses the iterative solvers.
+
+       [1mf3d    [22mis the 3D version of GTECTON. "f3d" stands for  "finite  element
+              3D".   It  comes in two varieties: [4mf3d-D[24m uses the direct solver,
+              [4mf3d[24m uses the iterative solvers.
+
+[1mSEE ALSO[0m
+       pln(1), pln(7), opn(1), opn(7), f3d(1), f3d(7),  plnplt(1),  opnplt(1),
+       plt3d(1)
+
+[1mBUGS OR POSSIBLE FLAWS[0m
+       Report bugs to Rob Govers (email: r.govers@uu.nl).
+
+[1mLITERATURE[0m
+       Govers, R., GTECTON technical reference manual.
+
+
+
+4th Berkeley Distribution       August 26, 2013                     GTECTON(1)

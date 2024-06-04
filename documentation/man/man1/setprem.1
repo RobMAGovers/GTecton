@@ -1,0 +1,18 @@
+.TH SETPREM 1 "March 1, 2021" "University of Utrecht"
+.UC 4
+.SH NAME
+setprem \- uses element center coordinates to assign radial elasticity variations to elements following the classical Preliminary Reference Earth Model (PREM) of Dziewonsky and Anderson (1981).
+.SH SYNOPSIS
+\fBsetprem\fP
+.SH DESCRIPTION
+\fBsetprem\fP is a support program for finite element code \fIGTECTON\fP, and specifically \fBf3d\fP,
+to assist in defining elastic properties in elements. Node and element file 
+names are assumed to be tecin.dat.nps and tecin.dat.elm. The third node 
+coordinate is assumed to represent the vertical distance with respect to the 
+free surface. \fBsetprep\fP writes file tecin.dat.elasticity, with the first 
+record refering to the first element, the second to the second element and so 
+on. The first column is the element material number, second column Young's modulus (Pa) and third column is Poisson's ratio. 
+.SH SEE ALSO
+\fIf3d(1)\fP, \fIf3d(7)\fP
+.SH AUTHORS
+Rob Govers

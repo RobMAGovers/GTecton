@@ -1,0 +1,76 @@
+.TH GMSH2TECTON 1 "October 19, 2018" "Utrecht University"
+.UC 4
+.SH NAME
+gmsh2tecton \- extracts \fIGTECTON\fP data from \fIgmsh\fP output
+.SH SYNOPSIS
+\fBgmsh2tecton\fP [-c|-e|-n ISPEC|-s ISPEC] [-i meshfile] [-o outputfile] [-v]
+.SH DESCRIPTION
+\fBgmsh2tecton\fP is an interface program between mesh generator \fIGmsh\fP
+and finite element code \fIGTECTON\fP. It can be used to create input files for \fBGTECTON\fP, 
+or to select nodes or elements based on their tags (labels). 
+.SH ARGUMENTS
+.TP
+.BI "-I"
+Show info on the main ingredients of the mesh file
+.TP
+.BI "-c"
+Extract \fIGTECTON\fP formatted nodal point coordinates (default).
+.TP
+.BI "-e"
+Extract \fIGTECTON\fP formatted element definitions.
+.TP
+.BI "-n ISPEC"
+Extract node numbers with (integer) label/tag ISPEC. It is important to realize the hierarchy of 
+the tags. Point labels take priority over line labels over surface labels. This is how you can assign 
+label 10 to a surface, label 20 to its edge lines, and label 30 to its edge points.
+.TP
+.BI "-s ISPEC"
+Extract the numbers of elements that have an integer surface label/tag ISPEC. Output columns represent element#,
+face#, the unit outward normal vector to the element face and the surface area of the interface. This option is useful 
+for defining tractions on surfaces.
+.TP
+.BI "-f ISPEC"
+Extract element numbers with (integer) fault surface label ISPEC. This option is useful for defining both slippery
+and faulted nodes.
+Output columns represent element#, node# of the element interface, and the unit vector from the element center to the node, line center, or triangle center (See also: -m and -t output modifiers).
+.TP
+.BI "-i meshfile"
+\fIGmsh\fP mesh file. If not given, \fIgmsh2tecton\fP reads from standard input.
+\fIGmsh\fP can handle msh file formats version 2. Version 4 is not yet supported but you
+can use Mesh.MshFileVersion=2.2 in your \fIGmsh\fP .geo file to get version 2 output.
+.TP
+.BI "-l"
+Writes line segments from the mesh file to a VTK file.
+.TP
+.BI "-m"
+This option modifies the output when -f is used, by adding the first coordinate of the point, line or triangle as the last three columns of the output.
+.TP
+.BI "-o filename"
+Writes output to output file.
+.TP
+.BI "-v"
+Verbose output, i.e., report main stages of the program.
+.TP
+.BI "-t"
+When option -f is used, this option adds the physical volume tag of the element to the output.
+This is particularly useful when each side of a fault has a different material number
+so that the material number can be used to indentify on which side of the fault
+an element is located.
+Output columns represent element#, node#, and volume tag of the element, and the unit vector from the element center to the node, line center, or triangle center.
+.TE
+.SH EXAMPLES
+Show main info from the mesh file:
+.br
+.ce 1
+gmsh2tecton -I -i box.msh 
+.sp 2
+Extract tetrahedral elements from the mesh file:
+.br
+.ce 1
+gmsh2tecton -e -i domain.msh
+.SH SEE ALSO
+\fIgmsh\fP, \fIf3d(1)\fP, \fIf3d(7)\fP, \fIplt3d\fP
+.SH AUTHOR
+Rob Govers.
+.SH BUGS
+Report bugs to Rob Govers (r.govers@uu.nl).

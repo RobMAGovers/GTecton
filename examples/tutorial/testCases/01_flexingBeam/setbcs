@@ -1,0 +1,36 @@
+#!/bin/sh
+
+# SET NODAL BOUNDARY CONDITION CODES
+# select node numbers @ x=0 and add displacement boundary codes to them
+picknps -d 2 -n tecin.dat.nps -x 0 -e 1.0 |\
+ awk 'BEGIN{NONE=0; DISP=1; VEL=2; FORC=3}
+      {printf("%12d%5d%5d\n",$1,DISP,DISP)}'
+
+# select node number @ (x=500e3,y=-10e3) and add force boundary code to it
+picknps -d 2 -n tecin.dat.nps -x 500e3 -y -10e3 -e 1.0 |\
+ awk 'BEGIN{NONE=0; DISP=1; VEL=2; FORC=3}
+      {printf("%12d%5d%5d\n",$1,NONE,FORC)}'
+
+# close data block
+echo 'end ibc'
+
+# SET NODAL BOUNDARY CONDITION MAGNITUDES
+# no need to set zero values (this is the default)
+
+# select node number @ (x=500e3,y=-10e3) and add force magnitude to it
+picknps -d 2 -n tecin.dat.nps -x 500e3 -y -10e3 -e 1.0 |\
+ awk 'BEGIN{FX=0.0; FY=-1.0E5}
+     {printf("%12d%14.6e%14.6e\n",$1,FX,FY)}'
+
+# close data block
+echo 'end bc'
+
+# close Winkler codes block
+echo 'end iwink'
+
+# close Winkler magnitudes block
+echo 'end wink'
+
+# close Euler angles block
+echo 'end Euler'
+

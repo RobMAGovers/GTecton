@@ -1,0 +1,30 @@
+.\"	"@(#)signalc.3	1.0	12/15/93";
+.TH SIGNALC 3F-BSD "December 15, 1993" "Penn State Univ"
+.UC 4
+.SH NAME
+signalc \- change the action for a signal
+.SH SYNOPSIS
+subroutine signalc (signum, proc, flag)
+.br
+integer signum, flag
+.br
+external proc
+.SH DESCRIPTION
+When a process incurs a signal (see signal(3)) the default
+action is usually to clean up and abort. The user may
+choose to write an alternative signal handling routine. A
+call to signalc is the way this alternate action is specified
+to the system.
+.sp
+signum is the signal number (see signal(3)). If flag is
+negative, then proc must be the name of the user signal handling
+routine. If flag is zero or positive, then proc is
+ignored and the value of flag is passed to the system as the
+signal action definition. In particular, this is how previously
+saved signal actions can be restored. Two possible
+values for flag have specific meanings: 0 means "use the
+default action" (See NOTES below), 1 means "ignore this signal".
+.SH "SEE ALSO"
+kill(1), signal(2)
+.SH AUTHOR
+Rob Govers.

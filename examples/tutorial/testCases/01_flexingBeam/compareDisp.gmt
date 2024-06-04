@@ -1,0 +1,33 @@
+#!/bin/sh -x
+# Creates PostScript file of displacement using GMT commands
+
+#-- define data -------------------------------------------------------------
+
+analyticFile=analyticalResultPlot.dat
+numericFile=numericalResultPlot.dat
+
+plotFile=compareDisp.ps
+
+#-- set plot window ---------------------------------------------------------
+
+xmin=-20
+xmax=520
+ymin=-0.08
+ymax=0.005
+
+FRAME=-R${xmin}/${xmax}/${ymin}/${ymax}
+VIEW=-JX25c/15c
+
+gmt set PS_MEDIA A4
+
+gmt psbasemap ${FRAME} ${VIEW} -BWeSn+t"Flexure of a beam" -Bxa100f50+l"distance along beam [km]" -Bya0.02f0.01+l"flexure [m]" -K > ${plotFile} || exit 1
+
+gmt psxy ${analyticFile} ${FRAME} ${VIEW} -W1,black      -O -K  >> ${plotFile} || exit 1
+gmt psxy ${numericFile}  ${FRAME} ${VIEW} -Gblack -Sp0.3 -O -K   >> ${plotFile} || exit 1
+
+gmt pslegend ${FRAME} ${VIEW} -D20/-0.065/3.7c/3.7c/TL -O << END >> ${plotFile}
+N 1
+S 0.3c c 0.3c black 0.25p 1.7c Numerical result
+S 0.3c - 1.5c black 1p    1.7c Analytical solution
+END
+

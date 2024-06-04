@@ -1,0 +1,56 @@
+PLNPLT(1)                   General Commands Manual                  PLNPLT(1)
+
+
+
+[1mNAME[0m
+       feplt, plnplt - finite element post-processor.
+
+[1mSYNOPSIS[0m
+       [1mplnplt [22m[options]
+
+[1mDESCRIPTION[0m
+       [4mplnplt[24m  is  an  interactive  program  for examining finite element (FE)
+       input and output data. [4mplnplt[24m can also be viewed upon as  an  interface
+       between FE program [4mpln[24m and plot programs [4mGMT[24m and [4mP[24m.
+
+       When  called  without a file argument, [4mplnplt[24m reads commands from stan-
+       dard input (stdin). On-line help is provided in this  interactive  mode
+       by typing "?", or for example "? femi".  When a file argument is given,
+       commands are read from this file until, after the end-of-file (EOF) has
+       been reached succesfully, commands are read from stdin.
+
+[1mVERSION[0m
+       2011
+
+[1mOPTIONS[0m
+       [1mnoecho [22mSilent mode, i.e. set echoing off (this is the default).
+
+       [1mecho   [22mEchoing mode. Major stages of the program are reported.
+
+       [1mfile   [22mCommands file name.
+
+[1mFILES[0m
+       Files  which  are special to the program are described more extensively
+       in the [4mpln[24m(L) manual pages.  More  specific,  FE  input  files  are  by
+       default  assumed  to  be  "TECIN.DAT" and "TEMPIN.DAT". FE output is by
+       default assumed to reside in "FEDSK.DAT".
+
+[1mENVIRONMENT[0m
+       Environmental variable PU should be set to the subdirectory "putil"  of
+       the directory where [4mp[24m resides.
+
+       If set, variable MYTMP is the directory where temporary files are kept.
+       If not set, temporary storage occurs in /tmp.
+
+[1mSEE ALSO[0m
+       GMT(1), pln(1), P(1), pln(7)
+
+[1mBUGS[0m
+       Report bugs to Rob Govers (email: r.govers@uu.nl).
+
+[1mAUTHORS[0m
+       Written by Rob Govers.
+
+
+
+4th Berkeley Distribution       August 26, 2013                      PLNPLT(1)

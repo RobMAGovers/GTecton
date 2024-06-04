@@ -1,0 +1,15 @@
+.\"	"@(#)fdate.3	1.0	12/15/93";
+.TH FDATE 3F-BSD "December 15, 1993" "Penn State Univ"
+.UC 4
+.SH NAME
+fdate \- return date and time in an ASCII string
+.SH SYNOPSIS
+character*(*) function fdate()
+.SH DESCRIPTION
+Fdate returns the current date and time as a 24 character string in
+the format described under ctime(3).  Neither `newline' nor NULL will
+be included.
+.SH "SEE ALSO"
+time(3)
+.SH AUTHOR
+Rob Govers.

@@ -1,0 +1,33 @@
+DTIME(3F-BSD)                                                    DTIME(3F-BSD)
+
+
+
+NNAAMMEE
+       dtime - return elapsed execution time
+
+SSYYNNOOPPSSIISS
+       REAL*4 function dtime (tarray)
+       REAL*4 tarray(2)
+
+DDEESSCCRRIIPPTTIIOONN
+       This  routine  returns  elapsed  runtime  in  seconds  for  the calling
+       process.  Dtime returns the elapsed time since the last call to  dtime,
+       or the start of execution on the first call.
+
+       The  argument  array  returns user time in the first element and system
+       time in the second element.  The function value is the sum of user  and
+       system time.
+
+       The  resolution  of  all  timing is 1/CLK_TCK seconds, where CLK_TCK is
+       processor dependent.  The value of CLK_TCK can  be  queried  using  the
+       sysconf(2) call.
+
+SSEEEE AALLSSOO
+       times(2)
+
+AAUUTTHHOORR
+       Rob Govers.
+
+
+
+4th Berkeley Distribution      December 15, 1993                 DTIME(3F-BSD)

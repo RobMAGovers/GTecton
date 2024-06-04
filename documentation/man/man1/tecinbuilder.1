@@ -1,0 +1,43 @@
+'\" t
+.TH TECINBUILDER 1 "August 26, 2013" "Utrecht University"
+.UC 4
+.SH NAME
+tecinbuilder for creating and editing input files for \fIopn\fP, \fIpln\fP
+and \fIf3d\fP.
+.SH SYNOPSIS
+\fBtecinbuilder\fP [options]
+.SH VERSION 
+2012
+.SH OPTIONS
+.TP
+\fB-c, --check\fP \fIfilename\fP
+consistency check is performed for data contained in \fIfilename\fP and exits.
+.TP
+-convert -f|--file mechfilename [-t|--temp thermalfilename] 
+converts 2011 input files into 2012
+.TP
+\fB-f, --file\fP \fIfilename\fP
+.IR filename
+is imported upon start of tecinbuilder.
+.TP
+.BI "-h, --help"
+prints help and exits.
+.TP
+.BI "-i, --info"
+prints info for tecinbuilder and exits.
+.TP
+-new [options]
+Allows for generic file format
+.TP
+\fB-nogui [-s cmdfile]\fP
+starts tecinbuilder in commandline modus; optional \fIcmdfile\fP is a file with commands for tecinbuilder.
+.TP
+-t, --temp \fIfilename\fP
+Loads thermal filename when tecinbuilder starts
+.TP
+.BI "-v, --version"
+prints version information for tecinbuilder and exits.
+.SH SEE ALSO
+f3d(1), f3d(7), pln(1), pln(7), opn(1), opn(7)
+.SH "BUGS OR POSSIBLE FLAWS"
+Report bugs to Rob Govers (email: r.govers@uu.nl).

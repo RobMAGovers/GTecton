@@ -1,0 +1,3 @@
+trialMesh2D makes a regular mesh
+It can be plotted by reading the data using the plnplt script, 
+and plotting its output using the GMT script

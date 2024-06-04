@@ -1,0 +1,66 @@
+TRIANGULATE(1)                                                  TRIANGULATE(1)
+
+
+
+NNAAMMEE
+       triangulate - create a Delaunay triangulation of a set of points
+
+SSYYNNOOPPSSIISS
+       triangulate(points,n_pts,triang,p_n_triang,epsilon)
+       double *points;
+       int n_pts, *triang, *p_n_triang;
+       double epsilon;
+
+DDEESSCCRRIIPPTTIIOONN
+       _T_r_i_a_n_g_u_l_a_t_e  accepts  an array containing a list of points and produces
+       another array that groups them into triangles according to the Delaunay
+       triangulation.  The triangles tend to be as near to equilateral as pos-
+       sible.  The property they are guaranteed to satisfy is that if a circle
+       is  drawn  through  the vertices of one of the triangles no other point
+       will lie within the circle.  The Delaunay triangulation fails to  group
+       the vertices of regular polygons into triangles.
+
+       The points array is a two dimensional array of the form
+
+       points[n_vts][2]
+
+       where each pair in the array is a set of two double-precision floating-
+       point numbers denoting the x and y positions of a texel.  Lint asks you
+       to  coerce  this  array to _(_d_o_u_b_l_e _*_) since it is referred to as a one-
+       dimensional array within the procedure.
+
+       The _t_r_i_a_n_g array is also a two-dimensional array; this time of the form
+
+       triang[n_triang][3]
+
+       Each set of three elements of this array is a set of three indices into
+       the points array.  The indices indicate the three vertices of a  trian-
+       gle.   Lint  asks you to coerce this array to _(_i_n_t _*_) since it too must
+       be referred to as a one-dimensional array within the  procedure.   Note
+       that  the  numbers  returned in _t_r_i_a_n_g index starting from zero whereas
+       the numbers printed out by the program triangulate index starting  from
+       one  (since they are line numbers of a file).  The value of the pointer
+       _p___n___t_r_i_a_n_g is set to the number of triangles created by the  procedure.
+
+       _T_r_i_a_n_g_u_l_a_t_e accepts a parameter, _e_p_s_i_l_o_n_, an angle measured in radians.
+       Epsilon determines the slop allowed when deciding whether three  points
+       are  collinear.   i.e.  if three points are within _e_p_s_i_l_o_n radians of a
+       straight line they are considered to form  a  straight  line.   A  high
+       value  will  eliminate  the perhaps unwanted triangles along a straight
+       edge of an object.  By default _e_p_s_i_l_o_n is zero.  Note that in the  pro-
+       gram the angle _e_p_s_i_l_o_n is measured in degrees.
+
+
+       _T_r_i_a_n_g_u_l_a_t_e can be used as a filter.  See _t_r_i_a_n_g_u_l_a_t_e_(_1_)_.
+
+SSEEEE AALLSSOO
+       triangulate(1)
+
+BBUUGGSS
+HHIISSTTOORRYY
+       03-Mar-86  Michael J. Swain (swain) at University of Rochester
+              Created.
+
+
+
+                                    3/3/86                      TRIANGULATE(1)

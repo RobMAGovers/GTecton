@@ -1,0 +1,241 @@
+SETAREA(L)                                                          SETAREA(L)
+
+
+
+[1mNAME[0m
+       setarea - set refinement criteria for elements
+
+[1mSYNOPSIS[0m
+       [1msetarea  [22mbasename  [-p  x  y] [-l x1 y1 x2 y2] [-m mat] [-f factor] [-r
+       type] [-a percentage] [-minsize min] [-maxsize max] [-x power]
+
+[1mDESCRIPTION[0m
+       [1msetarea [22mis a program used in conjunction with the mesh generator [4mtrian-[0m
+       [4mgle[24m.   Its  purpose is to generate an additional file for [4mtriangle[24m such
+       that a subsequent mesh generation with [4mtriangle[24m results in a  new  mesh
+       with  (local)  refinements  compared  to  the  original  mesh.  Running
+       setarea on a mesh created by [4mtriangle[24m defined by three files, typically
+       named
+
+       domain.x.poly, domain.x.node, domain.x.ele,
+
+       with x an integer, by [4msetarea[24m:
+
+       [1msetarea domain.x [options][0m
+
+       creates an area file domain.x.area which contains for every element the
+       maximum allowed area of its refinement child triangles.   This  refine-
+       ment can be applied by calling [4mtriangle[24m as follows:
+
+       [1mtriangle -pqra domain.1[22m.
+
+       The  [1m-r  [22m(refine)  option  will  cause [4mtriangle[24m to read the .area file,
+       refine the mesh, and write the results to three new files
+
+       domain.x+1.poly, domain.x+1.node, domain.x+1.ele.
+
+       Note that [1mtriangle [22mlimits strong gradients in  element  size.  Multiple
+       [1mtriangle[22m+[1melmsize  [22miterations  are therefore needed to create a strongly
+       localized fine mesh.
+
+       [4msetarea[24m allows for tuning the characteristic of the refinement.
+
+[1mARGUMENTS[0m
+       [1mbasename[0m
+              [4mtriangle[24m base name, e.g., "domain.1".
+
+       [1m-p x y [22mFor refinement towards a point [4m(x,[24m [4my)[24m (this is the default  with
+              the  point  located in the middle of the domain).  The specified
+              point does not need to be located in the domain.
+
+       [1m-l x1 y1 x2 y2[0m
+              For refinement towards a line section given  by  begin  and  end
+              points [4m(x1,[24m [4my1)[24m and [4m(x2,[24m [4my2)[24m.
+
+       [1m-m mat [22mFor refinement of elements with material marker [4mmat[24m. There is no
+              smoothing zone between the area with the  material  in  question
+              and surrounding regions.
+
+       [1m-f factor[0m
+              [4mfactor[24m < 1, the refinement ratio (default 0.05). The area of the
+              new elements at the location with the densest refinement will be
+              this factor times the original area of the elements there.
+
+       [1m-d distance[0m
+              Specify  tapering  distance from the line or point.  The area of
+              elements within this range will be reduced  depending  on  their
+              actual  distance from the line or point; by the factor specified
+              by [1m-f [22mclose to the line or point,  and  less  so  further  away.
+              Note that increasing the tapering distance may result in smaller
+              elements in the target region (because triangle  limits  element
+              size gradients). We recommend that you use a significant part of
+              your domain size for the tapering distance.
+
+       [1m-r type[0m
+              Parameter to tune the character of refining:
+
+                 0 (default) refine elements by an amount that depends on the distance from a point or line
+                   (tapered refinement). The smallest elements (close to the point or line) will be reduced
+                   in size by a factor that is specified via [1m-f factor[22m.
+
+                 1 uniformly refine part of the domain given by the [4m-a[24m percentage (100% is entire domain).
+                   If [4m-a[24m is not given, the region within distance [4m-d[24m from the point or line is refined.
+
+              1002 refine towards point/line of refinement over entire domain
+
+                                                            distance
+                   refinement factor = ( f + (1-f) * ---------------------- ) ^ power
+                                                      ratio * max distance
+
+              1021 same as 1002, but takes the maximum area ([4m-a[24m) into account, so the refinement does not necessarily
+                   cover the entire domain.
+
+              1003 refine towards point/line of refinement over entire domain, according to
+
+                                                distance
+                   refinement factor = ( ---------------------- ) ^ power
+                                          ratio * max distance
+
+              1031 same as 1003, but takes the maximum area ([4m-a[24m) into account, so the refinement does not necessarily
+                   cover the entire domain.
+
+              1009 George Marketos refinement
+
+
+       [1m-a percentage[0m
+              Denotes which part of the domain should be refined (100 = entire
+              domain); used only by refinement types 1, 21 and 31.
+
+       [1m-minsize min[0m
+              Specify  minimum  area  for  elements  that  are  to be refined.
+              Smaller elements will remain unmodified by the refinement.
+
+       [1m-maxsize max[0m
+              Specify maximum area for elements that are to be refined. Larger
+              elements will remain unmodified by the refinement.
+
+       [1m-minrefresult min[0m
+              Specify  minimum  area  for  elements of refined grid. Note that
+              this is an estimate only.  In case (original size *  factor)  is
+              smaller than this number, the factor is changed to (minrefresult
+              / original area).  [4mTriangle[24m will use this number as an indicator
+              when  refining  the  mesh,  but  will  most  likely not match it
+              exactly.
+
+       [1m-maxrefresult max[0m
+              Specify maximum area for elements of  refined  grid.  Note  that
+              this  is  an estimate only.  In case (original size * factor) is
+              larger than this number, the factor is changed to  (maxrefresult
+              / original area).  [4mTriangle[24m will use this number as an indicator
+              when refining the mesh,  but  will  most  likely  not  match  it
+              exactly.
+
+       [1m-x power[0m
+              To  get  super  (>1) or sub (<1) linear refinement; used only by
+              refinement types 2, 21, 3, 31. For high values of x, the refine-
+              ment  is concentrated closely around the target. For low values,
+              the refinement tends to spread out more.
+
+[1mEXAMPLES[0m
+       An initial triangulation (e.g., from [1mtriangle -pqACa150 domain.poly[22m) of
+       a  1000x1000  square  domain results in nodes and elements contained in
+       files named domain.1.[poly/node/ele]:
+
+
+            0                 1000
+              +----------------+----> x
+              |. . . . . . . . .
+              |. . . . . . . . .
+              |. . . . . . . . .
+              |. . . . . . . . .
+              |. . . . . . . . .
+              |. . . . . . . . .
+              |. . . . . . . . .
+        -1000 +. . . . . . . . .
+              |
+              v
+              -y
+
+       [1msetarea domain.1 > domain.1.area [22mcreates a a  file  domain.1.area  with
+       new  element  areas.  To subsequently update the mesh with the new area
+       constraints a next triangulation step is needed (e.g., [1mtriangle  -rpqCa[0m
+       [1mdomain.1[22m).     This    results    in    a    new    mesh    in    files
+       domain.2.[poly/node/ele].
+
+       Options can be used to control the element area reduction. For example,
+       to  gradually  refine  the  top  quarter of the domain we create a file
+       domain.1.area with new element areas: [1msetarea domain.1 -l 0 0 1000 0 -a[0m
+       [1m25 -f 0.1 -r 1031 > domain.1.area[22m.
+
+       We  subsequently  update  the  mesh in a next triangulation step (e.g.,
+       [1mtriangle  -rpqa  domain.1[22m)  resulting  in   a   new   mesh   in   files
+       domain.2.[poly/node/ele]:
+
+            0                 1000
+              +----------------+----> x
+              |:::::::::::::::::
+              |.................
+              |. . . . . . . . .
+              |. . . . . . . . .
+              |. . . . . . . . .
+              |. . . . . . . . .
+              |. . . . . . . . .
+        -1000 +. . . . . . . . .
+              |
+              v
+              -y
+
+        We  could  also  refine  around an interesting point, let us say (1000
+       -1000),
+        [1msetarea domain.1 -p 1000 -1000 -a 50 -f 0.1 -r 1031 > domain.1.area[0m
+        Applying  the  generated  domain.1.area   will   give   a   new   mesh
+       domain.2.[poly/node/ele]:
+
+            0                 1000
+              +----------------+----> x
+              |. . . . . . . . .
+              |. . . . . . . . .
+              |. . . . . . . ...
+              |. . . . . .......
+              |. . . . ........:
+              |. . . .......::::
+              |. . . .....::::::
+        -1000 +. . .......::::::
+              |
+              v
+              -y
+
+       We  can  increase  the  power  of  refinement  closer  to the corner by
+       increasing the power
+        [1msetarea domain.1  -p  1000  -1000  -a  50  -f  0.1  -p  8  -r  1031  >[0m
+       [1mdomain.1.area[0m
+        Applying   the   generated   domain.1.area   will   give  a  new  mesh
+       domain.2.[poly/node/ele]:
+
+            0                 1000
+              +----------------+----> x
+              |. . . . . . . . .
+              |. . . . . . . . .
+              |. . . . . . . . .
+              |. . . . . . . . .
+              |. . . . . . . . .
+              |. . . . . . . ...
+              |. . . . . . ...::
+        -1000 +. . . . . . ..:::
+              |
+              v
+              -y
+
+
+[1mSEE ALSO[0m
+       [4mtriangle[24m, [4mpln[24m, [4mopn[0m
+
+[1mAUTHORS[0m
+       Rob Govers, Lukas van de Wiel
+
+[1mBUGS[0m
+       Report bugs to Rob Govers (r.govers@uu.nl)
+
+
+
+4th Berkeley Distribution        June 30, 2021                      SETAREA(L)

@@ -1,0 +1,54 @@
+#ifdef EXPERIMENTAL_FRICTION
+
+!******************** Differential forces  *******************
+
+if (numslpglobal.gt.0) then
+
+datatype = "diff forces"
+
+if (iecho.eq.2) then
+    if (NDOF.eq.2) then
+        write(stderr,*) 'Reading Diff forces, using format', FMT_fedsk2D_displacement, NDOF
+    else
+        write(stderr,*) 'Reading Diff forces, using format', FMT_fedsk3D_displacement, NDOF
+    endif
+endif
+
+
+ !call CLEAR (D,NDOF*NUMNP)
+ call clear_matrix(modeldatactx%Diforc, NDOF, NUMNP)
+
+if (ascin) then
+
+    if (NDOF.eq.2) then
+        frmt = FMT_fedsk2D_displacement
+    else
+        frmt = FMT_fedsk3D_displacement
+    endif
+
+!write(frmt,80) NDOF  (format 80 is still used elsewhere, so do not remove it)
+!80        format('(I12,1X,',I1,'E15.0)')
+
+
+    do n=1,meshdatactx%Nvglobal
+
+       read(luin,fmt=frmt,err=1000,end=2000,iostat=io) &
+              j,(modeldatactx%Diforc(i,n),i=1,NDOF)
+
+        if (j.ne.n) then
+            write(stderr,86) n
+86                   format(1x,'femout [e]: synchronization error in', &
+             1x,'differential forces data block for node ',I8)
+            ierr = EXEC
+            return
+        endif
+    enddo
+else
+    read(luin,err=1000,end=2000,iostat=io) &
+     ((modeldatactx%Diforc(i,n),i=1,NDOF),n=1,meshdatactx%Nvglobal)
+endif
+
+
+endif ! numslpglobal.gt.0
+
+#endif

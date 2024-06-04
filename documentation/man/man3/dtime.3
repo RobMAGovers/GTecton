@@ -1,0 +1,25 @@
+.\"	"@(#)dtime.3	1.0	12/15/93";
+.TH DTIME 3F-BSD "December 15, 1993" "Penn State Univ"
+.UC 4
+.SH NAME
+dtime \- return elapsed execution time
+.SH SYNOPSIS
+REAL*4 function dtime (tarray)
+.br
+REAL*4 tarray(2)
+.SH DESCRIPTION
+This routine returns elapsed runtime in seconds for the calling
+process.  Dtime returns the elapsed time since the last call to dtime,
+or the start of execution on the first call.
+.sp
+The argument array returns user time in the first element and system
+time in the second element.  The function value is the sum of user and
+system time.
+.sp
+The resolution of all timing is 1/CLK_TCK seconds, where CLK_TCK is
+processor dependent.  The value of CLK_TCK can be queried using the
+sysconf(2) call.
+.SH "SEE ALSO"
+times(2)
+.SH AUTHOR
+Rob Govers.

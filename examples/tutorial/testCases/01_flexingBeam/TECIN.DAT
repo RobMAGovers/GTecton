@@ -1,0 +1,17 @@
+Benchmark for the Rayleigh Taylor instability
+       39603       77634           1
+    2    1    1    1    0    0    0    0    0    0    0
+    0
+.so tecin.dat.partf.nps
+.so tecin.dat.partf.elm
+.so tecin.dat.bcs
+    0
+    0
+  sec
+  0.5
+    0    1    1    2    1    0    0    0    0    0
+    0
+           0           0           0           0           0           0           0           0
+           1        7.5E10           0.3  5.000000e+31           1.0           1.0           1.0
+end material props
+           0.0           0.0           0.0

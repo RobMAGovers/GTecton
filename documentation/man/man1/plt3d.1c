@@ -1,0 +1,62 @@
+PLT3D(1)                    General Commands Manual                   PLT3D(1)
+
+
+
+[1mNAME[0m
+       plt3d  -  research  tool aimed at providing ways to 1) output files for
+       direct visualization of 3D  [4mGTecton[24m  in-  and  output  data,  2)  moni-
+       tor/probe the FEM output for nodes or elements with specific [4mGMSH[24m tags,
+       and 3) monitor/probe FEM output for specific node or  element  numbers.
+       Most  of the output is written as Visualization Toolkit (VTK) files. In
+       the current version, we use the VTK  variant  for  SERIAL  unstructured
+       data  (VTU).  The  data  format  is limited to ASCII, i.e., there is no
+       BINARY support.  [4mParaView[24m can read and visualize the VTU data.
+
+       NOTE: The functionality of the current version of the code is very lim-
+       ited.  The  most important limitation is that the change in output data
+       structure (nodal point based to element  based)  that  comes  with  the
+       introduction  of  faulted  or  slippery  nodes is hardly recognized and
+       implemented. Monitoring is highly incompletely supported.
+
+[1mSYNOPSIS[0m
+       [1mplt3d [22m[options]
+
+[1mDESCRIPTION[0m
+       [4mplt3d[24m is an interactive program for examining finite element (FE) input
+       and  output  data. [4mplt3d[24m can also be viewed as a filter between FE pro-
+       gram [4mf3d[24m and visualization program [4mParaView[24m (for above aim 1).
+
+       When called without a file argument, [4mplt3d[24m reads commands from standard
+       input  (stdin). On-line help is provided in this interactive mode in by
+       typing "?" or for example "? femi".  When a  file  argument  is  given,
+       commands are read from this file until, after the end-of-file (EOF) has
+       been reached succesfully, commands are read from stdin.
+
+[1mVERSION[0m
+       2021
+
+[1mOPTIONS[0m
+       [1mnoecho [22mSilent mode, i.e. set echoing off (this is the default).
+
+       [1mecho   [22mEchoing mode. Major stages of the program are reported.
+
+       [1mfile   [22mCommands file name.
+
+[1mFILES[0m
+       Files which are special to the program are described  more  extensively
+       in  the  [4mf3d[24m(7)  manual  pages.  More  specific,  FE input files are by
+       default assumed to be "TECIN.DAT" and "TEMPIN.DAT".  FE  output  is  by
+       default assumed to reside in "FEDSK.DAT".
+
+[1mSEE ALSO[0m
+       f3d(1), gmsh(1), ParaView(1)
+
+[1mBUGS[0m
+       Report bugs to Rob Govers (email: r.govers@uu.nl).
+
+[1mAUTHORS[0m
+       Written by Rob Govers.
+
+
+
+4th Berkeley Distribution      February 4, 2021                       PLT3D(1)

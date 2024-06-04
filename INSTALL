@@ -1,0 +1,422 @@
+########################################################
+#
+#  This readme contains the install prodecure of GTECTON
+#  and direction to further documentation.
+#
+########################################################
+# 
+#  Further documentation consist of five works:
+#
+########################################################
+
+1: Introduction to LAFEModeling
+Covers basic principles of lithospheric finite elemenent 
+modeling in general and on how to do it in GTECTON, with
+easy examples
+
+2: Advanced examples
+Contains more complicated real-world examples, some
+from scientific publication.
+
+3: GTECTON equations  
+Covers the mathematics behind the continuum mechanics
+as implemented in GTECTON.
+
+4: Programmer's manual
+Notes on the code and its working.
+
+5: Changelog
+Changes from version to version
+
+
+########################################################
+#
+#  Install Procedure
+#
+########################################################
+
+The following installation procedure has been tested on:
+
+Ubuntu 22.04 LTS
+
+The installation of GTECTON is divided into five steps.
+
+-------------------------------------------------------
+
+1: Prerequisites
+2: Installing PETSc, the linear solver.
+3: Installing METIS, the partitioning tool
+4: Installing GTECTON itself. 
+5: Testing the installation
+
+-------------------------------------------------------
+1: Prerequisites
+-------------------------------------------------------
+
+a) On linux, beside a basic install, the following packages 
+   are required:
+   - a C++ compiler, such as g++; version at least 4.6.0.
+     This can be checked with the command
+     > gfortran --version
+   - a fortran compiler, such as gfortran
+   - Cmake, at least version 2.5
+   - X11. On Debian clones, the package is libx11-dev.
+
+   On Ubuntu clones those are installed using apt-get:
+
+sudo apt-get install \
+libopenblas-dev \
+g++ \
+gfortran \
+cmake \
+libx11-dev
+
+   On Debian, the command 'sudo' is deprecated and replaced by 'doas'
+
+doas -u root apt-get install \
+etc.
+
+b) The following packages are not required, but recommended:
+   - cmake-curses-gui, contains ccmake, making cmake easier to use.
+   - GMT, General Mapping Tool, for plotting.
+   - GSHHG, the coastline database, also for plotting.
+   - evince, a pleasant and light-weight pdf viwer.
+
+   On Debian clones these are installed using apt-get:
+
+sudo apt-get install \
+cmake-curses-gui \
+gmt \
+gmt-gshhg-full \
+evince
+
+--------------------------------------------------------
+
+c) The default openmpi package cannot be used by PETSc,
+and the PETSc option download-openmpi, that should live
+up to its namesake, does not result in working configuration.
+
+as such, openmpi must be installed manually:
+
+a) make a directory where open MPI should be installed,
+   such as:
+
+   > mkdir /opt/openmpi
+   > cd /opt/openmpi
+
+b) get the source code:
+
+   > wget https://download.open-mpi.org/release/open-mpi/v4.1/openmpi-4.1.4.tar.gz
+
+c) unpack it:
+
+   > tar -xzf openmpi-4.1.4.tar.gz
+
+d) make a directory where the binaries are supposed to go:
+
+   > mkdir installHere
+
+e) configure and make openMPI
+
+   > ./configure --prefix=/opt/openmpi/openmpi-4.1.4/installHere --enable-static
+   > make -j
+   > make install
+
+   The mpi library libmpi.a should now have been created at
+   /opt/openmpi/openmpi-4.1.4/installHere/lib/libmpi.a
+
+f) ensure that the environment variables know where to find MPI:
+
+   in bash
+
+   > export PATH=/opt/openmpi/openmpi-4.1.4/installHere/bin:$PATH
+
+   or in (t)csh
+
+   > setenv PATH /opt/openmpi/openmpi-4.1.4/installHere/bin:$PATH
+
+-------------------------------------------------------
+2: Installing PETSc
+-------------------------------------------------------
+
+a) Create a directory in which PETSc is to be installed.
+
+   > mkdir /opt/petsc
+   > cd /opt/petsc
+
+b) Download PETSc 3.17.2 from 
+
+   > wget https://ftp.mcs.anl.gov/pub/petsc/release-snapshots/petsc-3.17.2.tar.gz
+
+   The PETSc interface can differ vastly between versions, and 
+   even one minor version more or less is enough to
+   break the interface completely, leading to linking errors
+   when linking GTECTON later on. Picking the correct version
+   prevents this.
+
+c) unpack the archive using : 
+
+   > tar -xzf petsc-3.17.2.tar.gz
+
+   A directory ./petsc-3.17.2/ will be made, containing
+   the PETSc source code
+
+d) Set the environment variable PETSC_DIR.
+   PETSC_DIR must contain the path to the PETSc directory.
+
+   An example in bash:
+
+   > export PETSC_DIR=/opt/petsc/petsc-3.17.2
+
+   or in (t)csh:
+
+   > setenv PETSC_DIR /opt/petsc/petsc-3.17.2
+
+   Note: you can find the type of your shell by:
+
+   > echo $SHELL
+
+   Note that these paths here are just examples and
+   they may be different on your machine, depending on
+   where you installed PETSc. This example merely follows
+   the Linux convention of installing software in the 
+   /opt/ directory, for 'optional'.
+
+e) In this generated petsc-3.17.2 directory, 
+   configure PETSc, using the command:
+
+   > ./configure [options]
+
+   PETSc relies on many external components
+   and the options choose whether to download a version
+   or to use an existing version in a directory on the
+   system. 
+
+   Documentation on these options can found on the 
+   PETSc website: https://petsc.org/release/install/
+
+   and an overwhelming complete list can be found by: 
+
+   > ./configure --help
+
+   Two examples follow. 
+
+   Example (1) used to follow this installation procedure 
+   on a fresh Ubuntu system:
+
+./configure  \
+COPTFLAGS='-O3 -march=native -mtune=native' \
+CXXOPTFLAGS='-O3 -march=native -mtune=native' \
+FOPTFLAGS='-O3 -march=native -mtune=native' \
+LIBS=-ldl \
+--with-debugging=0 \
+--with-x=0 \
+--with-shared-libraries=0 \
+--with-mpi-dir=/opt/openmpi/openmpi-4.1.4/installHere
+
+   Note that spaces after the backslashes will
+   invalidate such a script.
+
+   Note also that it is important that there is no space between
+   './' and 'configure'. 
+
+   Note also that configuring can easily take over half an hour,
+   depending on the options used. All downloaded components will
+   be configured and compiled, which takes time.
+
+   If the environment variables have been set incorrectly, the
+   configure process will abort quickly and show an error.
+
+f) Compile PETSc using: 
+
+   > make -j
+
+g) Make sure that the static library libpetsc.a has been
+   created in the directory
+
+   ./petsc-3.17.2/[name of the architecture]/lib/
+
+h) Test the build by running three examples using: 
+
+   > make test
+
+   Address possible failures.
+
+i) Optional:
+
+   In the gtecton directory, a file 
+
+   petsc_options.txt
+
+   can be made, which is read on starting of a gtecton run.
+   This file may contain options to fine-tune PETSc.
+   The file can contain options that PETSc refers to as
+   'database flags', and a list can be found at:
+
+   http://www.mcs.anl.gov/petsc/petsc-current/docs/manualpages/KSP/KSPSetFromOptions.html
+
+   If this file does not exist, PETSc will use default options.
+
+
+-------------------------------------------------------
+3: Installing METIS
+-------------------------------------------------------
+
+   METIS is a partitioning library used by GTECTON.
+   If we run a default installation using the package managers
+   only a shared object is installed, but we need a static
+   archive, so we compile it.
+
+a) make a directory and download the source code.
+
+   > mkdir /opt/metis
+   > cd /opt/metis
+   > wget http://glaros.dtc.umn.edu/gkhome/fetch/sw/metis/metis-5.1.0.tar.gz
+   > tar -xzf metis-5.1.0.tar.gz
+   > cd metis-5.1.0
+
+b) follow the instructions in Install.txt,
+   which are at the time of writing:
+   1) edit include/metis.h
+   Set IDXTYPEWIDTH to 32 
+   and REALTYPEWIDTH to 64
+   2) > make config
+   3) > make
+
+   libmetis.a should now have been generated in:
+   /opt/metis/metis-5.1.0/build/Linux-x86_64/libmetis
+
+-------------------------------------------------------
+4: Installing GTECTON
+-------------------------------------------------------
+
+a) Create two environment variables to indicate where PETSc is.
+   PETSC_DIR must point to the PETSc directory, for example:
+
+   > export PETSC_DIR=/opt/petsc/petsc-3.17.2
+
+   Note	that this path here is just an example and  
+   that it may be different on your machine, depending on
+   where you installed PETSc. This example merely follows 
+   the Linux convention	of installing software in the 
+   /opt/ directory, for	'optional'.
+
+   Note also that PETSC_ARCH points to the architecture of the system.
+   The architecture is the name of the directory where PETSc
+   had just entered its binaries, after installation, for example
+   'arch-linux2-c-opt' or 'linux-gnu-x86_64'
+
+   > export PETSC_ARCH=linux-gnu-x86_64
+
+   Note those are the commands in bash. The (t)csh equivalent is:
+
+   > setenv [variable name] [value]
+
+   It is convenient to put these commands in the ~/.bashrc 
+   or ~/.cshrc respectively to have the variables set automatically
+   every time a new shell is opened.
+
+b) place and extract the gtecton.tar.gz in the install directory
+
+   > mkdir /opt/gtecton
+   > cp gtecton.tar.gz /opt/gtecton
+   > cd /opt/gtecton
+   > tar -xzf gtecton.tar.gz
+
+   A new directory 'gtecton' will be creating containing the 
+   sources etc.
+
+c) Configure GTECTON uses cmake:
+
+   > mkdir installHere
+   > cd installHere
+
+   Cmake needs arguments to find all its dependencies, such as:
+
+> cmake \
+-DLAPACK_LIBRARIES=/usr/lib/x86_64-linux-gnu/liblapack.a \
+-DBLAS_LIBRARIES=/usr/lib/x86_64-linux-gnu/libblas.a \
+-DMETIS_LIBRARIES=/opt/metis/metis-5.1.0/build/Linux-x86_64/libmetis/libmetis.a \
+-DMETIS_INCLUDE_DIR=/opt/metis/metis-5.1.0/build/Linux-x86_64/include \
+-DMPI_HOME=/opt/openmpi/openmpi-4.1.4/installHere \
+..
+
+   Another example used on the UU Earth Science cluster:
+
+> cmake \
+-DLAPACK_LIBRARIES=/trinity/opt/apps/software/lapack/lapack-3.9.0Static/build/lib/liblapack.a \
+-DBLAS_LIBRARIES=/trinity/opt/apps/software/lapack/lapack-3.9.0Static/build/lib/libblas.a \
+-DMETIS_LIBRARIES=/trinity/opt/apps/software/METIS/metis-5.1.0_gcc12/build/lib/libmetis.a \
+-DMETIS_INCLUDE_DIR=/trinity/opt/apps/software/METIS/metis-5.1.0_gcc12/build/include \
+-DMPI_HOME=/trinity/opt/apps/software/openmpi/openmpi-4.0.4/build \
+..
+
+d) Compile GTECTON
+
+   > make
+   
+   Now the binary files should be created in the directory
+
+   ./installHere
+
+e) Set the environment variable PATH to point to the GTECTON
+   executables
+
+   > export PATH=/[path/to/gtecton]/installHere:$PATH
+
+   Note the string sign '$' in front of 'PATH', to indicate 
+   that we use the context of the variable, and not just the 
+   plain text 'PATH'
+
+   Add this to ~/.bashrc for convenience
+
+   or, for csh (add to ~/.cshrc)
+
+   > setenv PATH /[path/to/gtecton]/installHere:$PATH
+
+f) Similarly ensure that the GTECTON man pages can be accessed:
+
+   > export MANPATH=/[path/to/gtecton]/man:$MANPATH 
+
+   Detailed information on the input format is available in:
+
+   > man 7 pln
+
+-------------------------------------------------------
+5: Testing the installation
+-------------------------------------------------------
+
+   GTECTON is supplied with a test case that can be run
+   to verify the installation. It consist of a 2D beam that
+   is clamped on side, and pushed down on the other side.
+   The analytical solution to this problem is known,
+   and the test includes a comparison with the model result.
+
+   The plot containing the analytical and numerical solution
+   is made with GMT. It is a versatile plotting program with
+   lots of features to handle map projections, even though 
+   here it is only used for a simple Carthesian plot. More
+   information on GMT can be obtained here: 
+   https://www.generic-mapping-tools.org/
+
+   It is a Debian package and if not yet installed with the
+   recommended prerequisites it can be installed with:
+
+   > sudo apt-get install gmt
+
+a) Go into the test directory:
+
+   > cd /[path/to/gtecton]/tests/testCases/01_flexingBeam
+
+b) The test is supplied with a makefile that is set up
+   process-based in stead of file-based.
+   This violates Make conventions, but improves transparency.
+
+   Run the test using the makefile:
+
+   > make test
+
+c) the plot should now be available in this directory as a
+   a pdf file: compareDisplacement.pdf.
+   A black line indicates the analytical solution.
+   Black dots indicate the numerical solution.

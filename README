@@ -1,0 +1,61 @@
+Thank you for choosing GTECTON. 
+The code is source-controlled with GIT. 
+Major version number is 2023.7
+
+The code was initially developed under the name TECTON by Jay Melosh and Arthur Raefsky. 
+GTECTON was developed from TECTON version 1.4 (release 1989). 
+More on the early history of GTECTON can be found in file HISTORY.
+
+GTECTON is a research code that has been under continual development. 
+The research publications below document some of the more outstanding developments. 
+I hope that the code is of some use to you for your research. 
+Should scientific publications result from your work with GTECTON, 
+I ask that you cite relevant papers from the list below so that I get some credit for the work.
+
+The source code consists of the finite element codes themselves (src/04_simulating subdirectory), 
+source codes for post-processing (src/06_postprocessing), 
+i.e., turning the FE output into files for plotting with GMT, 
+and other stuff like mesh generation.
+
+To compile and install the codes, 
+start with the INSTALL file in the gtecton subdirectory (after unpacking the tarball).
+
+Currently the code is developed and maintained by 
+Rob Govers (r.govers@uu.nl) and Lukas van de Wiel (l.y.vandewiel@uu.nl). 
+
+
+REFERENCES
+
+Melosh, H. J., and A. Raefsky, The dynamical origin of subduction zone topography,Geophys. J. R. Astr. Soc., 60, 333-354, 1980. First publication with the predecessor of GTECTON (TECTON).
+
+Melosh, H. J., and A. Raefsky, A simple and efficient method for introducing faults into finite element computations, Bull. Seismol. Soc. Am. 71(5), 1391-1400, 1981. First publication about split (faulted) nodes in TECTON.
+
+Melosh, H.J., and C.A. Williams, Mechanics of graben formation in crustal rocks: a finite element analysis, J. Geophys. Res., 94, 13,961-13,973, 1989. First publication about slippery nodes in TECTON.
+
+Govers, R., Wortel, M.J.R., 1993. Initiation of asymmetric extension in continental lithosphere. Tectonophysics 223, 75–96. First publication with the thermo-mechanical GTECTON code, including temperature dependent viscosities, traction boundary conditions, residual force update, and Von Mises plasticity.
+
+Govers, R.M.A., Dynamics of lithospheric extension: A modeling study, PhD Thesis, Geologica Ultraiectina, 105, 240 pp., 1993. First publication with the consequences of surface processes on lithosphere dynamics.
+
+Hall Wallace, M., and H.J. Melosh, Buckling of a pervasively faulted lithosphere, Pageoph., 142(2), 1994. Description of handling of geometric non-linearity.
+
+Govers, R., Meijer, P., 2001. On the dynamics of the Juan de Fuca plate. Earth and Planetary Science Letters 189, 115-131. First publication with the spherical plane stress GTECTON code.
+
+Govers, R., Wortel, M., 1995. Extension of stable continental lithosphere and the initiation of lithospheric scale faults. Tectonics 14, 1041-1055. First publication with strain weakening and large deformation update in the GTECTON code.
+
+Govers, R., Wortel, M., 1999. Some remarks on the relation between vertical motions of the lithosphere during extension and the necking depth parameter inferred from kinematic modeling studies. Journal of Geophysical Research 104, 23,245-23,253. First publication with Winkler pressure boundary conditions
+
+Buiter, S., Govers, R., Wortel, M., 2002. Two-dimensional simulations of surface deformation caused by slab detachment. Tectonophysics 354, 195-210. First publication with self-orienting slippery fault displacements.
+
+Govers, R., Wortel, M., 2005. Lithosphere tearing at STEP faults: response to edges of subduction zones. Earth and Planetary Science Letters 236, 505-523. First publication with 3D version and sparse solver implementation of GTECTON.
+
+Schmalzle, G., Dixon, T., Malservisi, R., Govers, R., 2006. Strain accumulation across the Carrizo segment of the San Andreas Fault, California: Impact of laterally varying crustal properties. Journal of Geophysical Research 111. First publication with out-of-plane version of GTECTON.
+
+De Franco, R., Govers, R., Wortel, R., 2007. Numerical comparison of different convergent plate contacts: subduction channel and subduction fault. Geophysical Journal International 171, 435-450. First publication with solution of steady state solution to diffusion-advection equation in GTECTON.
+
+De Franco, R., Dynamics of subduction and continental collision: influence of the nature of the plate contact, Ph.D. thesis Utrecht University, Geologica Ultraiectina, 284, 129 pp., 2008. First publication with remeshing procedure.
+
+Plattner, C., Malservisi, R., Govers, R., 2009. On the plate boundary forces that drive and resist Baja California motion. Geology 37, 359-362. First publication on handling fault intersections and triple junctions in GTECTON.
+
+Baes M, Govers R, Wortel R. Subduction initiation along the inherited weakness zone at the edge of a slab: Insights from numerical models. Geophysical Journal International. 2011;184(3):991-1008. doi:10.1111/j.1365-246X.2010.04896.x. First paper with updated and expanded plasticity formulation and plastic strain softening. 
+
+George OA, Malservisi R, Govers R, Connor CB, Connor LJ. Is uplift of volcano clusters in the Tohoku Volcanic Arc, Japan, driven by magma accumulation in hot zones? A geodynamic modeling study. Journal of Geophysical Research. 2016;121:4780-4796. doi:10.112/2016JB012833. First paper with the axisymmetric implementation of GTECTON.

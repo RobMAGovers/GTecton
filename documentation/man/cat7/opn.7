@@ -1,0 +1,802 @@
+OPN(7)                 Miscellaneous Information Manual                 OPN(7)
+
+
+
+[1mVERSION[0m
+       Parallel 2021.08
+
+[1mINPUT DATA: FORMAT AND MEANING[0m
+       This  manual describes the format of the input datafiles only. Refer to
+       the "Introduction to LAFEM modelling" manual  and  the  "GTECTON  equa-
+       tions" manual for the meaning of the input data, and for examples.
+
+       In  the data input phase, the program first searches for the input file
+       in which  nodal  coordinates,  mechanical  boundary  conditions  (bcs),
+       mechanical material properties and elements are defined. Typically, the
+       name of this file is "TECIN.DAT". Structuring of the  data  is  facili-
+       tated  through  the use of include files. Files may be included using a
+       ".so FILENAME" statement.   For  example,  to  include  a  nodal  point
+       datafile, file TECIN.DAT contains a record of the form
+
+                                 .so NodalPoints.dat
+
+       where  "NodalPoints.dat" is the data file containing the actual defini-
+       tions of nodal point coordinates. Note that the  ".so  FILENAME"-state-
+       ment  has  to  be left-aligned in the file, i.e. it should start in the
+       first column of the record. Nesting of include files is  allowed.  Pro-
+       gram  [4msoelim[24m  is  used  by GTecton to replace include statements by the
+       actual file contents.
+
+       The "soelim"ed file is in fixed format. Each read action  starts  on  a
+       new  record.  Table  1  shows the contents of the mechanical input data
+       file.  Depending on the value of switch variable MODE, solution of  the
+       thermal problem may be initiated. If a solution of the heat equation is
+       requested, a second input file is looked for. Typically,  the  name  of
+       this  file is TEMPIN.DAT.  This file is opened after TECIN.DAT has been
+       read and the mechanical problem has been set up. In TEMPIN.DAT, initial
+       conditions,  thermal  bcs  and thermal material properties are defined.
+       Table 2 shows the contents of TEMPIN.DAT.
+
+       Note that tabs do no constitute proper formatting.
+
+[1mNAMES[0m
+       The listing below specifies a large number of variable and array names.
+       These names should be explained here in a table. For now, their meaning
+       is listed in gtecton.F, the main program in the source code.
+
+[1mFORTRAN NUMBER NOTATION[0m
+       The specification between will make use  of  the  fortran  standard  to
+       describe  variables.  It  will  use  notations  such 3i5, to describe a
+       sequence of three integers, each having five digits. The possible types
+       are:
+
+       [1min[22m, an [1mi[22mnteger [1mn [22mdigits long
+
+       [1man[22m, an [1ma[22mscii astring, [1mn [22mcharacters long
+
+       [1mfn.m[22m, a [1mf[22mloating point number, [1mn [22mcharacters long, of which [1mm [22mbegind the
+       comma. When [1mm [22mis 0, as is always the case  in  the  format  indications
+       below, the format is free. This is identical for [1men.m [22mand [1mgn.m[22m.
+
+       [1men.m[22m,  a floating point number with an [1mE[22m-power, such as 17E3, to repre-
+       sent the number 17000.
+
+       [1mgn.m[22m, a [1mg[22meneral floating point number that will accept both the conven-
+       tions of [1me [22mand of [1mg[0m
+
+       In  front of each number, there can be a multiplier, indicating a repe-
+       tition of the format. Examples are:
+
+       [1m5i3 [22mrepresenting [1m5 i[22mntegers, each [1m3 [22mdigits long.
+
+       [1m6g14.0 [22mrepresenting [1m6 g[22meneral floating point numbers,  each  [1m14  [22mdigits
+       long.
+
+[1mSEE ALSO[0m
+       opn(1), pln(1), f3d(1), soelim(1), opnplt(1)
+
+
+[1mNUMBERING CONVENTIONS[0m
+       Nodal points:                            Faces:
+                  4             3                        3
+                  o-------------o                 o-------------o
+                  |             |                 |             |
+                  |             |                 |             |
+                  |             |                 |             |
+                  |             |               4 |     5/6     | 2
+                  |             |                 |             |
+                  |             |                 |             |
+                  |             |                 |             |
+                  o-------------o                 o-------------o
+                  1             2                        1
+       Collapse  of  nodal  points  4 onto 3 gives a triangle-element. Element
+       face 5 is the top surface, face 6 the bottom surface.
+
+
+[1mRESTARTS[0m
+       When time stepping needs to be halted and restarted again, a number  of
+       issues  should be taken care of. Ideally a separate TECIN.DAT should be
+       provided for each computional run. In  the  first  file  the  value  of
+       [1mISTART  [22mshould  be  positive  and  indicate that after each ISTART time
+       steps a "RESTART.DAT" file is written.  For the other files this  value
+       should be negative: this indicates that "RESTART.DAT" is read first and
+       will be written every ABS(ISTART) time steps. The number of total  time
+       steps  should  naturally be different for each, and increasing for suc-
+       cessive input files.  For example, for a problem  with  in  total  2000
+       time  steps  but  broken  up  in  two runs of each 1000, the first file
+       should have 1000 time steps and the second file should have  2000  time
+       steps.  The values of [1mNMPRT [22mand [1mIMPRINT [22mshould be kept the same for all
+       files.
+
+
+[1mREGRID[0m
+       For regridding the same issues should be taken  care  of  as  mentioned
+       above  for  restarts.  Additionally, since during the regridding proces
+       the connectivity of the vertices might change all input  files  related
+       to element boundary conditions should be updated.
+
+
+
+
+
+             TABLE 1. MECHANICAL PROBLEM INPUT DATA ("TECIN.DAT").
+
+  ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+  read (a80)                                   TITLE                    title of the mechanical problem
+  ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+  read (3i12)                                  NUMNP                    Number of nodal points
+                                               NUMEL                    Number of elements
+                                               NUMAT                    Number of materials
+  ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+  read (11i5)                                  MODE                     1. solver switch:
+
+                                                                           0=mech. input data check
+                                                                           1=mech. rank check
+                                                                           2=mech. solution
+                                                                           3=mech.+therm. input data check
+                                                                           4=therm. rank check
+                                                                           5=therm. solution
+                                                                           6=mech.+therm. solution
+                                               NINTG                    2. number of time step groups
+                                               NMPRT                    3. >=0: number of mech. solution outputs
+                                                                            <0: output every ABS(NMPRT) time step
+                                               MAXIT                    4. max. no. of iterations between
+                                                                           stifness matrix reforms
+                                               NLINK                    5. number of linked nodes
+                                               ICVIS                    6. viscosity update switch:
+                                                                           0=constant viscosities
+                                                                           first digit; powerlaw creep viscosity update
+                                                                           second digit; visco-plastic update
+                                                                           third digit; viscous weakening update
+                                                                                  1 = strain weakening
+                                                                                  2 = strain rate weakening
+                                                                           fourth digit; plasticity weakening update
+                                                                                  1 = strain weakening
+                                                                                  2 = strain rate weakening
+                                               ISTART                   7. Restart switch:
+                                                                           0=no restart
+                                                                           N=write "RESTART.DAT" every N time steps
+                                                                          -N=restart from file "RESTART.DAT" and rewrite
+                                                                             every IABS(N) time steps
+                                               NELAST                   8. ITIME=0 load switch:
+                                                                           = 0 apply all loads
+                                                                           <>0 exclude forcing by initial stresses
+                                               NPRMAT                   9. >=0: number of matrix diagonal outputs
+                                                                            <0: output every ABS(NPRMAT) time step
+                                               IVELOOUT                 10. Velocity output switch:
+                                                                           0=no velocity outputs
+                                                                           1=velocity outputs
+                                               Cyclic                   11. Cyclic locking switch:
+                                                                           0=no cyclic locking
+                                                                           1=cyclic locking
+  ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+  nread = MAX(1,NMPRT)
+  read (5000i5)                                IMPRINT(i),
+                                                   i=1,nread            times of output
+  ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+  if (NPRMAT > 0) {
+      read (51i5)                              IMATPR(i),
+                                                   i=1,NPRMAT           times of matrix diagonal output
+  }
+  ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+                                                           DEFINITION OF PARTITIONED NODAL COORDINATES:
+
+  until (n == 0 or
+    n == "end") {
+      read (I5,I12,2G25.17,I5,kI12)
+                                               p                        partition number, starting at 0
+                                               idx                      index of the nodal point, starting at 1
+                                               (X(i,n),
+                                                   i=1,NSD)             nodal coordinates
+                                               l                        label of the node
+                                               k                        number of neighboring points
+                                               k idx                    indices of those neighboring points
+  }
+  ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+                                                                      DEFINITION OF ELEMENTS:
+
+  while (n != 0 && n != "end") {
+     read (i5,6i12)                            p                        partition number, starting at 0
+                                               n                        Element number, starting at 1
+                                               MAT(n)                   Material number
+                                               (IEN(i,n),
+                                                   i=1,NEN)             Node numbers
+  }
+  ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+                                                             DEFINITION OF NODAL BOUNDARY CONDITIONS:
+
+  until (n == 0 or
+    n == "end") {
+      read (i12,2i5)                           n                        node number
+                                               (IBOND(i,n),
+                                                   i=1,NDOF)            bc type codes:
+                                                                        0=unconstrained
+                                                                        1=displacement bc
+                                                                        2=velocity bc
+                                                                        3=force bc
+                                                                        4=initial displacement bc
+                                                                        5=strain rate bc (experimental)
+  }
+  until (n == 0 or
+    n == "end") {
+      read (i12,3(g14.0))                      n                        node number
+                                               (BOND(i,n),
+                                                   i=1,NDOF)            bc magnitudes
+  }
+  ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+                                                         DEFINITION OF LINKED COORDINATES: (EXPERIMENTAL)
+
+  if (NLINK > 0) {
+    idof=1
+    until (idof == 0 or
+      idof == "end") {
+        read (I5,2I12)                         idof                     degree of freedom that is linked
+                                               LinkNode                 node number of the slave node
+                                               LinksToNode              node number of the master node
+      }
+  }
+  ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+                                                                DEFINITION OF NODAL WINKLER FORCES:
+
+  until (n == 0 or
+    n == "end") {
+    read (i12,3i5)                             n                        node number
+                                               (IWINK(i,n),
+                                                   i=1,NDOF)            Nodal Winkler codes:
+                                                                        <0=applied until step ABS(IWINK)
+                                                                         0=no Winkler force
+                                                                        >0=applied from step IWINK-1 onward
+  }
+  until (n == 0 or
+    n == "end") {
+      read (i12,3(g14.0))                      n                        node number
+                                               (WINK(i,n),
+                                                   i=1,NDOF)            Nodal Winkler force magnitudes
+  }
+  ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+                                                                DEFINITION OF NODAL MAXWELL FORCES:
+
+  if (NWINK > 0) {
+    until (n == 0 or
+      n == "end") {
+      read (i12,3(g14.0))                      n                        node number
+                                               (FMAXW(i,n),
+                                                   i=1,NDOF)            Nodal Maxwell force magnitudes,
+
+    }
+  }
+  ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+                                                                DEFINITION OF LOCAL DOF ROTATIONS:
+
+  until (n == 0 or
+    n == "end") {
+      read (i12,2(g14.0))                      n                        node number
+                                               (SKEW(i,n),
+                                                   i=1,2)               Euler angles (cc, deg)
+                                                                        angles rotate local into global system
+  }
+  ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+                                                                DEFINITION OF TIME STEP PARAMETERS:
+
+  nread = MAX(1,NINTG)
+  read (ki5)                                   (MAXSTP(i),
+                                                   i=1,nread)           Number of steps in each time step group
+  read (kf5.0)                                 (DELT(i),
+                                                   i=1,nread)           Time step size in each time step group
+  read (ka5)                                   (UNIT(i),
+                                                   i=1,nread)           Unit of time step size:
+                                                                        can be "", sec, msec, year, Ma
+                                                                        (defaults to seconds)
+                                                                        (time step size throughout the model
+                                                                         definition files should be consistent)
+  read (kf5.0)                                 (ALPHA(i),
+                                                   i=1,nread)           Alpha parameters for mechanical problem
+
+  ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+                                                                             SWITCHES:
+
+  read (10i5)                                  IOPT                      1. 0=Plane strain,
+                                                                            1=Plane stress
+                                               IPOINT                    2. Integration rule for forces:
+                                                                            (either 1 or NEN)
+                                               LGDEF                     3. Large deformation (Lagrangian) update:
+                                                                            0=Linear strain-displacement matrix
+                                                                            1=Updated strain-displacement matrix
+                                               IRESDU                    4. Residual forces update:
+                                                                            0=No load vector update
+                                                                            1=Echo imbalance, no update
+                                                                            2=Update (normal for LGDEF=1)
+                                               IGRAV                     5. Gravity switch:
+                                                                            0=Gravity off
+                                                                            1=Gravity on
+                                               IVLIM                     6. Viscosity minimum switch:
+                                                                            0=No viscosity limits
+                                                                            1=Static viscosity limits (see
+                                                                              powerlaw creep parameters below)
+                                                                            2=Min. and max. viscosity limit from time step
+                                                                              in addition to static limits.
+                                               INCOMP                    7. Incompatibility mode:
+
+                                                                            0=compatible nodes
+                                                                            1=incompatible nodes
+                                               NOCOMPR                   8. Incompressibility:
+                                                                            0=off
+                                                                            1=on
+                                               NSED                      9. Sediment transport loads switch
+                                               ISHELL                    10. Spherical geometry switch
+  ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+                                                                          SURFACE NODES:
+
+  read (i12)                                   NSURF                     3. Number of surface nodal points
+  ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+                                                                   ELEMENT BOUNDARY CONDITIONS:
+
+  read (7i12)                                  NUMPR                     1. Number of pressure bcs
+                                               NUMSTR                    2. # of stress bcs
+                                               NUMWNK                    3. # of Winkler restoring
+                                                                            pressure bcs.
+                                                                            If NUMWNK<0 hydrostatic winkler
+                                               NUMSLP                    4. # of slippery node entries.
+                                                                         This counts the node element-node combinations.
+                                               NSLSKEW                   5. # of fault parallel elements
+                                               NUMFN                     6. Number of split node inputs
+                                               NPRE                      7. Number of pre-stress inputs
+                                               NFRIC                     8. Number of friction entries
+
+                                                                DEFINITION OF MATERIAL PROPERTIES:
+
+  until (n == 0 or
+    n == "end") {
+      read (i12,6g14.0)                        n                        1. Material number
+                                               E(n)                     2. Elastic Young's modulus
+                                               POIS(n)                  3. Elastic Poisson's ratio
+                                               EMHU(n)                  4. Effective viscosity
+                                               ANPWR(n)                 5. Power
+                                               WT(n)                    6. Mass density (if MODE>=3 interpreted
+                                                                           as zero temperature mass density)
+                                               TH(n)                    7. Element hickness
+  }
+
+  if (NINTG > 0 &&
+    ICVIS) {
+      until (n == 0 or
+      n == "end") {
+        read (i12,6g14.0)                      n                        1. Material number
+                                               Qpl(n)                   2. Powerlaw activation energy (kJ/mole)
+                                               Apl(n)                   3. Powerlaw pre-exp. (Pa^-n . s^-1)
+                                               Npl(n)                   4. Powerlaw stress power
+                                               VMIN(n)(n)               5. [optional] Minimum computed viscosity
+                                               VMAX(n)(n)               6. [optional] Maximum computed viscosity
+                                               Vpl(n)                   7. Powerlaw activation volume (m^3/mole)
+      }
+  }
+
+
+
+                                                            DEFINITION OF VISCO-PLASTICITY PARAMETERS:
+
+  if (NINTG > 0 &&
+    ICVIS) {
+      until (n == 0 or
+      n == "end") {
+        read (i12,2i5,5g14.0)                  n                        1. Material number
+
+                                               NPTYPE(n)                2. Plasticity type
+                                                                           0=No plastic flow
+                                                                           1=Tresca
+                                                                           2=von Mises
+                                                                           3=Mohr-Coulomb
+                                                                           4=Drucker-Prager
+                                               NFLOW(n)                 3. Yield law
+                                                                           0=exponential
+                                                                           1=powerlaw
+                                               FRANGL(n)                4. Friction angle
+                                               UNIYLD(n)                5. (Equivalent) uniaxial yield stress
+                                               FLUIDY(n)                6. Fluidity
+                                               YLDPWR(n)                7. Yield power
+                                               STNHRD(n)                8. Strain hardening
+      }
+  }
+
+
+                                                                DEFINITION OF WEAKENING PARAMETERS:
+
+  if (NINTG > 0 &&
+    ICVIS) {
+    until (n == 0 or
+    n == "end") {
+        read (i12,6g14.0)                      n                        1. Material number
+                                               VWEAK(n)                 2. Viscosity weakening factor (1=no weakening)
+                                               VSIGMA(n)                3. Viscosity weakening interval
+                                               CWEAK(n)                 4. Plasticity weakening factor
+                                               CSIGMA(n)                5. Plasticity weakening interval
+      }
+  }
+  ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+                                                           DEFINITION OF SEDIMENT TRANSPORT PARAMETERS:
+
+  if (NINTG > 0 && NSED != 0) {
+      read (2g14.0)                            RHOSED                   1. Sediment mass density
+                                               KSED                     2. Erosion constant
+  }
+  ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+                                                    RADIUS OF THE SHELL. (omitted when simulating on the plane)
+  if (ISHELL == 1) {
+      read (g14.0)                             RADIUS                   Sphere radius
+  }
+  ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+                                                                              GRAVITY
+  read (3G14.0)                                GRAV(i),
+                                                   i=1,NDOF             Magnitude of gravity acceleration
+
+  ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+                                                                  DEFINITION OF INITIAL STRESSES:
+  if (NPRE > 0) {
+      while (ISELM(i) != 0 &&
+        ISELM(i) != "end") {
+          read (i12,i6,3g14.0)                 ISELM(i)                 Element no.
+                                               ISTIME(i)                Stress application mode
+                                                                        <=0 not applied
+                                                                        > 0: applied in timestep ISTIME(i)-1
+                                               (STN0(i,n),
+                                                   i=1,NSTR)            Pre-stress
+      }
+
+
+  }
+  ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+                                                            DEFINITION OF PRESSURE BOUNDARY CONDITIONS:
+
+  if (NUMPR > 0) {
+      while ( IELNO(i) != 0 &&
+        IELNO(i) != "end" ) {
+          read (i12,i5,g14.0)                  IELNO(i)                 Element no.
+                                               ISIDE(i)                 Element side no.
+                                               PRES(i)                  Pressure
+      }
+  }
+  ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+                                                        DEFINITION OF STRESS/TRACTION BOUNDARY CONDITIONS:
+
+  if (NUMSTR > 0} {
+      while ( IELSTR(i) != 0 &&
+        IELSTR(i) != "end" ) {
+          read (i12,i5,2i6,6g14.0)             IELSTR(i)                Element no.
+                                               ISSIDE(i)                Element side no.
+                                               ISTR(1,i)                Time (interval) of application
+                                                                        e.g. 1 will apply in time step 1
+                                               ISTR(2,i)                (Optional): 1 5
+                                                                        results in incremental application from step
+                                                                        1 to 5
+                                               (STRS(n,i),
+                                                   n=1,6)               SXX,SYY,SZZ,SXY,SXZ,SYZ
+      }
+  }
+  ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+                                                            DEFINITION OF WINKLER RESTORING PRESSURES:
+
+  if (NUMWNK > 0} {
+      while ( IWELM(i) != 0 &&
+        IWELM(i) != "end" ) {
+          read (i12,i5,i6,g14.0)               IWELM(i)                 Element no.
+                                               IWSIDE(n)                Element side no.
+                                               IWTIME(n)                Winkler application mode
+                                                                        <0=applied until step ABS(IWTIME)
+                                                                        -1=always applied
+                                                                         0=no Winkler pressures
+                                                                        >0=applied from step IWTIME-1 onward
+                                               WPRES(n),                Winkler pressure value
+  }
+  ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+                                                               DEFINITION OF FAULTED (SPLIT) NODES:
+
+  if (NUMFN > 0) {
+      while (NFAULT(1,i) != 0 &&
+        NFAULT(1,i) != "end") {
+          read (2i12,i5,3f14.0)                NFAULT(1,i)              Element no.
+                                               NFAULT(2,i)              Node number of faulted node.
+                                               NFAULT(3,i)              Application mode (for differential displacements, not relevant for velocities):
+                                                                        >=  0 time of application
+                                                                        < 0 Apply every ABS(NFAULT(3,i)) time steps
+                                               (FAULT(j,i),
+                                                   j=1,NDOF)            Split vector for 1/2 node.
+      }
+  }
+  ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+                                                                   DEFINITION OF SLIPPERY NODES:
+
+  if (NUMSLP > 0) {
+      while (NSLIP(1,i) != 0 &&
+        NSLIP(1,i) != "end") {
+          read (2i12,3i5,3f14.0)               NSLIP(1,i)               Element no.
+                                               NSLIP(2,i)               Node number (global number)
+                                               NSLIP(3,i)               Weight (+/-) on DOF 1
+                                               NSLIP(4,i)               Weight (+/-) on DOF 2
+                                               NSLIP(5,i)               Weight (+/-) on DOF 3
+                                               (DIFORC(j,i),
+                                                   j=1,NDOF)            Differential force across interface.
+      }
+
+      Note that the input value for the differential force in the boundary conditions input file has to be double the value of the phyiscally intended force.
+                                                   See the GTecton equations book for the reasoning behind this.
+  ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+                                                         FAULT PARALLEL SLIPPERY ELEMENTS: (EXPERIMENTAL)
+
+      if (NSLSKEW > 0) {
+          while (NSELSD(1,i) != 0 &&
+            NSELSD(1,i) != "end") {
+              read (i12,i5)                    NSELSD(1,i)              Element no.
+                                               NSELSD(2,i)              Side no.
+          }
+      }
+
+  if (Cyclic=0) {  DEFINITION OF NON-PERIODIC DIFFERENTIAL WINKLER FORCES
+
+      until (n == 0 or n == "end") {
+      read (i12,3i5)                           n                        node number
+                                               (IWINX(i,n),
+                                                   i=1,NDOF)            Slippery node Winkler codes:
+                                                                        <0=applied while ITIME<ABS(IWINX)
+                                                                        >=0=applied when ITIME >= IWINX
+      }
+      until (n == 0 or n == "end") {
+          read (i12,i5,3(g14.0))               n                        node number
+                                               (WINX(i,n),
+                                                   i=1,NDOF)            Slippery node Winkler force magnitudes
+      }
+    }
+  Note that the input value for the differential Winkler force in the boundary conditions input file has to be double the value of the phyiscally intended force.
+                                                   See the GTecton equations book for the reasoning behind this.
+
+                                             else (For Cyclic=1) {  DEFINITION OF PERIODIC DIFFERENTIAL WINKLER FORCES
+
+       until (n == 0 or n == "end") {
+       read (i12,3i5)                          n                        node number
+                                               (IWINX(i,n),
+                                                   i=1,NDOF)            Slippery node Winkler codes:
+                                                                        <0=applied when
+                                                                          MOD(ITIME,ABS(IWINX)) >= 10
+                                                                        >0=applied when
+                                                                          MOD(ITIME,IWINX) < 10
+       }
+       until (n == 0 or n == "end") {
+           read (i12,i5,3(g14.0))              n                        node number
+                                               (WINX(i,n),
+                                                   i=1,NDOF)            Slippery node Winkler force magnitudes
+       }
+  }
+  Note that the input value for the differential Winkler force in the boundary conditions input file has to be double the value of the phyiscally intended force.
+                                                   See the GTecton equations book for the reasoning behind this.
+  ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+                                                           DEFINITION OF WINKLER DIFFERENTIAL STRESSES:
+
+      until (n == 0 or n == "end") {
+      read (i12,3i5,3g14.0)                    n                        element number
+                                               ISIDE                    element side
+                                               MODE                     Slippery Winkler codes:
+                                                                         <0=applied until step ABS(MODE)
+                                                                         0=no Winkler force
+                                                                        >0=applied from step MODE-1 onward
+                                               SN                       normal Winkler stress
+                                               TN                       tangential Winkler stress
+                                               TN                       tangential Winkler stress
+      }
+      until (n == 0 or n == "end") {
+      read (i12,3i5,3g14.0)                    n                        element number
+                                               ISIDE                    element side
+                                               MODE                     Slippery Winkler codes:
+                                                                         <0=applied until step ABS(MODE)
+                                                                         0=no Winkler force
+                                                                        >0=applied from step MODE-1 onward
+                                               SN                       normal Winkler stress
+                                               TN                       tangential Winkler stress
+                                               TN                       tangential Winkler stress
+      }
+  }
+  ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+                                                                      DEFINITION OF FRICTION:
+
+  if (nFrictionGlobal > 0) {
+     while (FaultIndex != "end" {
+         read (3i12,2f14.0)                    FaultIndex               Index of the fault
+                                               point1                   Start point of the friction surface
+                                               point2                   End point of the friction surface
+                                               staticFriction            Strength of the friction
+                                               winkler                  winkler force used to converge to displacement
+     }
+
+
+                                                                   DEFINITION OF SURFACE NODES:
+
+  if (NINTG > 0 && NSURF > 0) {
+    while ( ISURF(n) != 0 &&
+      ISURF(n) != "end" ) {                                             ASCENDING or DESCENDING
+        read (i12,i5)                          ISURF(n)                 Surface node number
+    }
+  }
+  -
+
+
+
+
+
+              TABLE 2. THERMAL PROBLEM INPUT DATA ("TEMPIN.DAT").
+
+  --------------------------------------------------------------------------------------------
+  read (a80)                     TITLE       Title or comment on thermal problem
+  read (6i5)                     ITMODE      1. Initial temperature switch:
+                                                0 = calculate steady state
+                                                    initial temperatures
+                                                1 = read initial temperatures from file
+                                                2 = calculate initial distribution using
+                                                    function "temp0.f" (in source dir)
+                                                3 = read parameters into initial T array,
+
+                                                    then use parameters to compute initial
+                                                    temperatures using function "temp0.f"
+                                 NTCALC      2. >=0: No. of therm. calculations
+                                                 <0: therm. calc. every ABS(NTCALC) time step
+                                 NTPRT       3. >=0: number of therm. solution outputs
+                                                 <0: output every ABS(NTPRT) time step
+                                 MAXTIT      4. Max. no. of calculation steps between
+                                                thermal stiffness matrix reforms
+                                 IADVEC      5. Advecting grid switch:
+                                                0 = normal calculation
+                                                1 = advecting grid (only if MODE=3,4,5)
+                                                    Use IBOND, BOND, NFAULT and FAULT
+                                                    velocity bc to advect grid.
+                                 IDIFT       6. Differential temperatures switch:
+                                                0 = no differential temperatures
+                                                1 = allow differential temperatures
+  --------------------------------------------------------------------------------------------
+
+
+                            DEFINITION OF THERMAL COMPUTATION TIMES
+
+  nread = MAX(NTCALC,1)
+  read (51i5)                    (ICALC(i),
+                                 i=1,nread)  times of thermal calculations.
+  --------------------------------------------------------------------------------------------
+
+
+                              DEFINITION OF THERMAL OUTPUT TIMES
+
+  nread = MAX(NTPRT,1)
+  read (51i5)                    (ITPRINT(i),
+                                 i=1,nread)  times of thermal calculations output
+  --------------------------------------------------------------------------------------------
+
+                              DEFINITION OF INITIAL TEMPERATURES
+
+  if (ITMODE == 1) {
+      while (node != 0 &&
+             node != "end") {
+          read (i12,g14.0)       node        node number
+                                 T(node)     nodal temperature
+      }
+  }
+  --------------------------------------------------------------------------------------------
+
+                            DEFINITION OF NODAL BOUNDARY CONDITIONS
+
+  while (node != 0 &&
+         node != "end") {
+      read (i12,i5)              node        node number
+                                 ITBC(node)  bc type code:
+                                             0=unconstrained
+                                             1=fixed nodal temperature
+  }
+
+  while (node != 0 &&
+         node != "end") {
+      read (i12,g14.0)           node        node number
+                                 TBC(node)   bc magnitude
+  }
+  --------------------------------------------------------------------------------------------
+
+                      DEFINITION OF IMPLICITNESS OF THERMAL TIMESTEPPING:
+
+  nread = MAX(1,NINTG)
+
+  read (50f5.0)                  (TALF(i),
+                                 i=1,nread)  alpha parameters for
+                                             each time step group
+  --------------------------------------------------------------------------------------------
+
+                           DEFINITION OF THERMAL MATERIAL PROPERTIES
+
+  for (i=1; i<=NUMAT; i++) {
+      read (i12,6g14.0)          n           1. material number
+                                 HEAT(n)     2. heat production per unit volume
+                                 CP(n)       3. specific heat at constant pressure
+                                 TEXP(n)     4. thermal expansivity
+                                 (COND(j,n),
+                                 j=1,NSD)    5. conductivities
+  }
+  --------------------------------------------------------------------------------------------
+
+                               MISCELLANEOUS THERMAL PARAMETERS
+
+  read (5i12)                    NFLX        number of surface heat flux inputs
+                                 NTANOM      >0: number of thermal anomaly inputs
+                                             <0: add anomaly generated by function "addan.f"
+                                             at itime=ABS(NTANOM) (in source directory)
+                                 ITPRES      tectonic contribution from temperature
+                                             changes switch when MODE=6 (0=add, 1=not add)
+                                 ITECT       tectonic contributions from thermal
+                                             anomalies switch when MODE=6 (0=add, 1=not add)
+                                             only has significance when ITPRES=0
+                                 NTWINK      number of thermal winkler inputs
+  --------------------------------------------------------------------------------------------
+
+                                DEFINITION OF THERMAL ANOMALIES
+
+  if (NTANOM > 0) {
+      while ( ITANOM(1,i) != 0 &&
+        ITANOM(1,i) != "end" ) {
+          read (i12,i5,i6,g14.0) ITANOM(1,i) Node number
+                                 ITANOM(2,i) Mode: 0=Replace, 1=Add
+                                 ITANOM(3,i) Time step when anomaly is applied
+                                             If = 0, apply to initial temperature field at
+                                                     the end of time step 0
+                                             If > 0, apply at beginning of time step
+                                             If < 0, keep constant after -time
+                                 TANOM(i)    Nodal thermal anomaly
+      }
+  }
+  --------------------------------------------------------------------------------------------
+
+                                   DEFINITION OF HEAT FLUX:
+
+  if (NFLX > 0) {
+      while ( IFLX(i) != 0 &&
+        IFLX(i) != "end" ) {
+          read (i12,i5,g14.0)    IFLX(i)     Element number
+                                 IFLS(i)     Element side number
+                                 BFLX(i)     Boundary normal heat flux
+      }
+  }
+  --------------------------------------------------------------------------------------------
+
+                              DEFINITION OF THERMAL WINKLER FLUX:
+
+  if (NTWINK > 0) {
+      while ( ITWINK(1,i) != 0 &&
+        ITWINK(1,i) != "end" ) {
+
+          read (i12,2i5,g14.0)   ITWINK(1,i) Element number
+                                 ITWINK(2,i) Element side number
+                                 ITWINK(3,i) Time code
+                                 TWINK(i)    Boundary normal Winkler flux
+      }
+  }
+
+
+
+4th Berkeley Distribution        June 24, 2021                          OPN(7)

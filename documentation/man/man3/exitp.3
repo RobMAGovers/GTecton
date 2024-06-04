@@ -1,0 +1,16 @@
+.\"	"@(#)exitp.3	1.0	12/15/93";
+.TH EXITP 3F-BSD "December 15, 1993" "Penn State Univ"
+.UC 4
+.SH NAME
+exitp \- terminate process
+.SH SYNOPSIS
+subroutine exitp (istatus)
+.br
+integer istatus
+.SH DESCRIPTION
+exitp() terminates the calling process and passes istatus to the system
+for inspection, see wait(2). Logical units are flushed and closed.
+.SH "SEE ALSO"
+exit(2), abort(2)
+.SH AUTHOR
+Rob Govers.

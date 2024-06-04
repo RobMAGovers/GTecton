@@ -1,0 +1,43 @@
+GETAREA(L)                                                          GETAREA(L)
+
+
+
+[1mNAME[0m
+       getarea - get information about the mesh
+
+[1mSYNOPSIS[0m
+       [1mgetarea [22mbasename
+
+[1mDESCRIPTION[0m
+       [1mgetarea  [22mis  a  program  to be used in conjunction with other auxiliary
+       mesh programs such as [4mpicknps[24m.  Its purpose is to present the user with
+       some  information  on  minimum  and  maximum values related to the mesh
+       defined. These values may be of help for setting search criteria  in  a
+       utility such as [4mpicknps[24m.  The values returned are:
+
+       maximum element area
+       minimum element area
+       maximum distance between nodal points
+       minimum distance between nodal points
+       maximum element height
+       minimum element height
+
+[1mARGUMENTS[0m
+       [1mbasename[0m
+              [4mtriangle[24m base name, e.g., "domain.1".
+
+[1mEXAMPLE[0m
+       getarea domain.1
+
+[1mSEE ALSO[0m
+       [4mpicknps[24m, [4mtriangle[0m
+
+[1mAUTHORS[0m
+       Wienand Drenth
+
+[1mBUGS[0m
+       Report bugs to Wienand Drenth (wdrenth@geo.uu.nl).
+
+
+
+4th Berkeley Distribution       April 12, 2011                      GETAREA(L)

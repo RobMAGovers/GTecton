@@ -1,0 +1,17 @@
+.\"	"@(#)csystem.3	1.0	12/15/93";
+.TH CSYSTEM 3F-BSD "December 15, 1993" "Penn State Univ"
+.UC 4
+.SH NAME
+csystem \- issue a shell command
+.SH SYNOPSIS
+subroutine csystem(command)
+.br
+character*(*) command
+.br
+.SH DESCRIPTION
+system() executes the command specified by the string pointed to by
+command.
+.SH "SEE ALSO"
+system(3C)
+.SH AUTHOR
+Rob Govers.

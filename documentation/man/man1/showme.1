@@ -1,0 +1,318 @@
+The command syntax is:
+
+showme [-bfw_Qh] input_file
+
+The underscore indicates that a number should follow the -w switch.
+input_file may be one of several types of file.  It must have extension
+.node, .poly, .ele, .edge, .part, or .adj.  If no extension is provided,
+Show Me will assume the extension .ele.  A .node file represents a set of
+points; a .poly file represents a Planar Straight Line Graph; an .ele file
+(coupled with a .node file) represents the elements of a mesh or the
+triangles of a triangulation; an .edge file (coupled with a .node file)
+represents a set of edges; a .part file specifies a partition of a mesh;
+and a .adj file represents the adjacency graph defined by a partition.
+
+Command Line Switches:
+
+    -b  Makes all PostScript output black and white.  If this switch is not
+        selected, color PostScript is used for partitioned meshes and
+        adjacency graphs (.part and .adj files).
+    -f  On color displays and in color PostScript, displays partitioned
+        meshes by filling triangles with color, rather than by coloring the
+        edges.  This switch will result in a clearer picture if all
+        triangles are reasonably large, and a less clear picture if small
+        triangles are present.  (There is also a button to toggle this
+        behavior.)
+    -w  Followed by an integer, specifies the line width used in all
+        images.  (There are also buttons to change the line width.)
+    -Q  Quiet:  Suppresses all explanation of what Show Me is doing, unless
+        an error occurs.
+    -h  Help:  Displays these instructions.
+
+Controls:
+
+  To zoom in on an image, point at the location where you want a closer
+  look, and click the left mouse button.  To zoom out, click the right
+  mouse button.  In either case, the point you click on will be centered in
+  the window.  If you want to know the coordinates of a point, click the
+  middle mouse button; the coordinates will be printed on the terminal you
+  invoked Show Me from.
+
+  If you resize the window, the image will grow or shrink to match.
+
+  There is a panel of control buttons at the bottom of the Show Me window:
+
+  Quit:  Shuts down Show Me.
+  <, >, ^, v:  Moves the image in the indicated direction.
+  Reset: Unzooms and centers the image in the window.  When you switch from
+    one image to another, the viewing region does not change, so you may
+    need to reset the new image to make it fully visible.  This often is
+    the case when switching between Delaunay triangulations and their
+    corresponding Voronoi diagrams, as Voronoi vertices can be far from the
+    initial point set.
+  Width+, -:  Increases or decreases the width of all lines and points.
+  Exp, +, -:  These buttons appear only when you are viewing a partitioned
+    mesh (.part file).  `Exp' toggles between an exploded and non-exploded
+    image of the mesh.  The non-exploded image will not show the partition
+    on a black and white monitor.  `+' and `-' allow you to adjust the
+    spacing between pieces of the mesh to better distinguish them.
+  Fill:  This button appears only when you are viewing a partitioned mesh
+    (.part file).  It toggles between color-filled triangles and colored
+    edges (as the -f switch does).  Filled triangles look better when all
+    triangles are reasonably large; colored edges look better when there
+    are very small triangles present.
+  PS:  Creates a PostScript file containing the image you are viewing.  If
+    the -b switch is selected, all PostScript output will be black and
+    white; otherwise, .part.ps and .adj.ps files will be color, independent
+    of whether you are using a color monitor.  Normally the output will
+    preserve the properties of the image you see on the screen, including
+    zoom and line width; however, if black and white output is selected (-b
+    switch), partitioned meshes will always be drawn exploded.  The output
+    file name depends on the image being viewed.  If you want several
+    different snapshots (zooming in on different parts) of the same object,
+    you'll have to rename each file after Show Me creates it so that it
+    isn't overwritten by the next snapshot.
+  EPS:  Creates an encapsulated PostScript file, suitable for inclusion in
+    documents.  Otherwise, this button is just like the PS button.  (The
+    main difference is that .eps files lack a `showpage' command at the
+    end.)
+
+  There are two nearly-identical rows of buttons that load different images
+  from disk.  Each row contains the following buttons:
+
+  node:  Loads a .node file.
+  poly:  Loads a .poly file (and possibly an associated .node file).
+  ele:  Loads an .ele file (and associated .node file).
+  edge:  Loads an .edge file (and associated .node file).
+  part:  Loads a .part file (and associated .node and .ele files).
+  adj:  Loads an .adj file (and associated .node, .ele, and .part files).
+  voro:  Loads a .v.node and .v.edge file for a Voronoi diagram.
+
+  Each row represents a different iteration number of the geometry files.
+  For a full explanation of iteration numbers, read the instructions for
+  Triangle.  Briefly, iteration numbers are used to allow a user to easily
+  represent a sequence of related triangulations.  Iteration numbers are
+  used in the names of geometry files; for instance, mymesh.3.ele is a
+  triangle file with iteration number three, and mymesh.ele has an implicit
+  iteration number of zero.
+
+  The control buttons at the right end of each row display the two
+  iterations currently under view.  These buttons can be clicked to
+  increase or decrease the iteration numbers, and thus conveniently view
+  a sequence of meshes.
+
+  Show Me keeps each file in memory after loading it, but you can force
+  Show Me to reread a set of files (for one iteration number) by reclicking
+  the button that corresponds to the current image.  This is convenient if
+  you have changed a geometry file.
+
+File Formats:
+
+  All files may contain comments prefixed by the character '#'.  Points,
+  segments, holes, triangles, edges, and subdomains must be numbered
+  consecutively, starting from either 1 or 0.  Whichever you choose, all
+  input files must be consistent (for any single iteration number); if the
+  nodes are numbered from 1, so must be all other objects.  Show Me
+  automatically detects your choice while reading a .node (or .poly) file.
+  Examples of these file formats are given below.
+
+  .node files:
+    First line:  <# of points>  <# of attributes>
+                                           <# of boundary markers (0 or 1)>
+    Remaining lines:     [attributes] [boundary marker]
+
+    The attributes, which are typically floating-point values of physical
+    quantities (such as mass or conductivity) associated with the nodes of
+    a finite element mesh, are ignored by Show Me.  Show Me also ignores
+    boundary markers.  See the instructions for Triangle to find out what
+    attributes and boundary markers are.
+
+  .poly files:
+    First line:  <# of points>  <# of attributes>
+                                           <# of boundary markers (0 or 1)>
+    Following lines:     [attributes] [boundary marker]
+    One line:  <# of segments> <# of boundary markers (0 or 1)>
+    Following lines:     [boundary marker]
+    One line:  <# of holes>
+    Following lines:    
+    [Optional additional lines that are ignored]
+
+    A .poly file represents a Planar Straight Line Graph (PSLG), an idea
+    familiar to computational geometers.  By definition, a PSLG is just a
+    list of points and edges.  A .poly file also contains some additional
+    information.
+
+    The first section lists all the points, and is identical to the format
+    of .node files.  <# of points> may be set to zero to indicate that the
+    points are listed in a separate .node file; .poly files produced by
+    Triangle always have this format.  When Show Me reads such a file, it
+    also reads the corresponding .node file.
+
+    The second section lists the segments.  Segments are edges whose
+    presence in a triangulation produced from the PSLG is enforced.  Each
+    segment is specified by listing the indices of its two endpoints.  This
+    means that its endpoints must be included in the point list.  Each
+    segment, like each point, may have a boundary marker, which is ignored
+    by Show Me.
+
+    The third section lists holes and concavities that are desired in any
+    triangulation generated from the PSLG.  Holes are specified by
+    identifying a point inside each hole.
+
+  .ele files:
+    First line:  <# of triangles>  <# of attributes>
+    Remaining lines:      ... [attributes]
+
+    Points are indices into the corresponding .node file.  Show Me ignores
+    all but the first three points of each triangle; these should be the
+    corners listed in counterclockwise order around the triangle.  The
+    attributes are ignored by Show Me.
+
+  .edge files:
+    First line:  <# of edges> <# of boundary markers (0 or 1)>
+    Following lines:     [boundary marker]
+
+    Endpoints are indices into the corresponding .node file.  The boundary
+    markers are ignored by Show Me.
+
+    In Voronoi diagrams, one also finds a special kind of edge that is an
+    infinite ray with only one endpoint.  For these edges, a different
+    format is used:
+
+          -1  
+
+    The `direction' is a floating-point vector that indicates the direction
+    of the infinite ray.
+
+  .part files:
+    First line:  <# of triangles> <# of subdomains>
+    Remaining lines:   
+
+    The set of triangles is partitioned by a .part file; each triangle is
+    mapped to a subdomain.
+
+  .adj files:
+    First line:  <# of subdomains>
+    Remaining lines:  
+
+    An .adj file represents adjacencies between subdomains (presumably
+    computed by a partitioner).  The first line is followed by
+    (subdomains X subdomains) lines, each containing one entry of the
+    adjacency matrix.  A nonzero entry indicates that two subdomains are
+    adjacent (share a point).
+
+Example:
+
+  Here is a sample file `box.poly' describing a square with a square hole:
+
+    # A box with eight points in 2D, no attributes, no boundary marker.
+    8 2 0 0
+    # Outer box has these vertices:
+     1   0 0
+     2   0 3
+     3   3 0
+     4   3 3
+    # Inner square has these vertices:
+     5   1 1
+     6   1 2
+     7   2 1
+     8   2 2
+    # Five segments without boundary markers.
+    5 0
+     1   1 2          # Left side of outer box.
+     2   5 7          # Segments 2 through 5 enclose the hole.
+     3   7 8
+     4   8 6
+     5   6 5
+    # One hole in the middle of the inner square.
+    1
+     1   1.5 1.5
+
+  After this PSLG is triangulated by Triangle, the resulting triangulation
+  consists of a .node and .ele file.  Here is the former, `box.1.node',
+  which duplicates the points of the PSLG:
+
+    8  2  0  0
+       1    0  0
+       2    0  3
+       3    3  0
+       4    3  3
+       5    1  1
+       6    1  2
+       7    2  1
+       8    2  2
+    # Generated by triangle -pcBev box
+
+  Here is the triangulation file, `box.1.ele'.
+
+    8  3  0
+       1       1     5     6
+       2       5     1     3
+       3       2     6     8
+       4       6     2     1
+       5       7     3     4
+       6       3     7     5
+       7       8     4     2
+       8       4     8     7
+    # Generated by triangle -pcBev box
+
+  Here is the edge file for the triangulation, `box.1.edge'.
+
+    16  0
+       1   1  5
+       2   5  6
+       3   6  1
+       4   1  3
+       5   3  5
+       6   2  6
+       7   6  8
+       8   8  2
+       9   2  1
+      10   7  3
+      11   3  4
+      12   4  7
+      13   7  5
+      14   8  4
+      15   4  2
+      16   8  7
+    # Generated by triangle -pcBev box
+
+  Here's a file `box.1.part' that partitions the mesh into four subdomains.
+
+    8  4
+       1    3
+       2    3
+       3    4
+       4    4
+       5    1
+       6    1
+       7    2
+       8    2
+    # Generated by slice -s4 box.1
+
+  Here's a file `box.1.adj' that represents the resulting adjacencies.
+
+    4
+      9
+      2
+      2
+      0
+      2
+      9
+      0
+      2
+      2
+      0
+      9
+      2
+      0
+      2
+      2
+      9
+
+Display Speed:
+
+  It is worthwhile to note that .edge files typically plot and print twice
+  as quickly as .ele files, because .ele files cause each internal edge to
+  be drawn twice.  For the same reason, PostScript files created from edge
+  sets are smaller than those created from triangulations.
